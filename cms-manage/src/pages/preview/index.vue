@@ -24,7 +24,7 @@
           手机扫码访问
         </p>
         <p class="desc">
-          微信“扫一扫”分享到朋友圈
+          已发布页面可在手机中打开
         </p>
         <div class="pic">
           <vue-qr :text="shareSrc" :size="180" />
@@ -36,7 +36,7 @@
 
 <script>
 import VueQr from 'vue-qr'
-// import settings from '@/config'
+import settings from '@/config'
 
 export default {
   name: 'Preview',
@@ -50,9 +50,19 @@ export default {
   created() {
     // 设置预览页面地址
     let { id } = this.$route.query
-    this.shareSrc = 'http://127.0.0.1:3010/crs/#/pagePreiview?' + `?id=${id}&data=${this.$store.state.wxParams}`
-    this.previewSrc = this.shareSrc
+    this.shareSrc = settings.previewSrc + '?' + new URLSearchParams({id}).toString()
+    this.previewSrc = settings.decorateOrigin + '/crs/#/pagePreiview?' + new URLSearchParams({id, draft:'1'}).toString()
   },
+  mounted() {
+    this.tokenListener = event => {
+      const frame = document.getElementById('previewIframe')
+      if(frame && event.source===frame.contentWindow && event.origin===settings.decorateOrigin && event.data && event.data.type==='cms-preview-auth') {
+        event.source.postMessage({type:'cms-preview-token',token:localStorage.getItem('token')||''},settings.decorateOrigin)
+      }
+    }
+    window.addEventListener('message',this.tokenListener)
+  },
+  beforeDestroy(){window.removeEventListener('message',this.tokenListener)},
   methods: {}
 }
 </script>

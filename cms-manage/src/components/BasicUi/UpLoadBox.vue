@@ -23,6 +23,7 @@
         </div>
       </template>
     </template>
+    <button v-if="uploadFile" class="library-button" type="button" @click="selectLibrary">图片库</button>
     <el-upload v-show="false"
                :headers="headers"
                ref="upload"
@@ -38,7 +39,7 @@
         +&nbsp;上传图片
       </el-button>
       <div slot="tip" class="el-upload__tip">
-        只能上传jpg/png文件，且不超过500kb
+        只能上传jpg/png文件，且不超过2MB
       </div>
     </el-upload>
   </div>
@@ -83,6 +84,10 @@ export default {
     }
   },
   methods: {
+    selectLibrary() {
+      this.$store.commit('SET_UPIMAGE_FUC', url => this.$emit('update:imgUrl',url))
+      this.$store.commit('SET_UPIMAGE_VISIBLE',true)
+    },
     editImg() {
       console.log(this.uploadFile, 111)
       if (this.uploadFile) {
@@ -100,7 +105,7 @@ export default {
         this.$message.error('上传图片只能是 JPG/PNG 格式!')
       }
       if (!isLt500) {
-        this.$message.error('上传图片大小不能超过 500kb!')
+        this.$message.error('上传图片大小不能超过 2MB!')
       }
       if (isJPG && isLt500) {
         this.uploading = true
@@ -112,6 +117,7 @@ export default {
     // 上传图片成功的方法
     doSuccess(response, file, fileList) {
       this.uploading = false
+      if(response.code!==10000){this.$message.error(response.message||'上传失败');return}
       this.$emit('update:imgUrl', response.data)
       // this.$emit('onSuccess', response.data)
     },

@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     cover: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.STRING(1024),
       allowNull: false
     },
     page_type: {
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER
     },
     page_string: {
-      type: DataTypes.STRING(256),
+      type: DataTypes.TEXT('long'),
       allowNull: false,
       get () {
         const page_string = this.getDataValue('page_string')
@@ -50,14 +50,14 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     creator: {
-      type: DataTypes.STRING(10),
+      type: DataTypes.STRING(100),
       allowNull: false
     },
     share_desc: {
-      type: DataTypes.STRING(100)
+      type: DataTypes.STRING(1024)
     },
     share_image: {
-      type: DataTypes.STRING(100)
+      type: DataTypes.STRING(1024)
     }
   },
   {

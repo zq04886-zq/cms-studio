@@ -1,17 +1,1 @@
-module.exports = {
-    publicPath: '/crs/',
-    lintOnSave: false,
-    devServer: {
-        host: '127.0.0.1',
-        port: 3010,
-        open: false,
-        // proxy: {
-        //   '^/api': {
-        //     target: 'https://erp-newdev.fuchuang.com',
-        //     headers: {
-        //       host: 'erp-newdev.fuchuang.com'
-        //     }
-        //   }
-        // }
-    },
-}
+module.exports={publicPath:'/crs/',lintOnSave:false,devServer:{host:'127.0.0.1',port:3010,proxy:{'/atlas-cms':{target:'http://127.0.0.1:3300'},'/uploads':{target:'http://127.0.0.1:3300'}}}}

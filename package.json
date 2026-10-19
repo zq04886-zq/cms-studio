@@ -1,0 +1,16 @@
+{
+  "name": "cms-studio",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "setup": "node scripts/tasks.cjs install",
+    "build": "node scripts/tasks.cjs build",
+    "start": "node cms-node/index.js",
+    "db:init": "node cms-node/scripts/init-db.js",
+    "test": "node --test cms-node/test/*.test.cjs",
+    "check": "node scripts/check.cjs"
+  }
+}

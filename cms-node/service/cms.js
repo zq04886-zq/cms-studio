@@ -1,398 +1,77 @@
 const BaseService = require('./base')
-const dayjs = require('dayjs')
-const isBetween = require('dayjs/plugin/isBetween')
-const _ = require('lodash')
-const { sequelize } = require('../models')
-const { model } = require('./base')
-const loginTools = require('../utils/login')
-const { createHmac } = require('crypto');
-dayjs.extend(isBetween)
-
-class CMSService extends BaseService {
-  static async initData() {
-    const { model } = this
-    const t = await model.sequelize.transaction();
-    try {
-
-      // 创建应用
-      await model.application.create({
-        name: '商城小程序'
-      })
-
-      // 创建组件类目
-      const basis = await model.component_group.create({
-        name: '基础组件',
-        update_time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-      })
-      const basis_id = basis.id
-      await model.component_group.create({
-        name: '业务组件',
-        update_time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-      })
-
-      // 创建组件定义数据
-      const componentData = [
-        {
-          group_id: basis_id,
-          name: '魔方',
-          component_key: 'cubeSelection',
-          update_time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-        },
-        {
-          group_id: basis_id,
-          name: '文本',
-          component_key: 'RichText',
-          update_time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-        },
-        {
-          group_id: basis_id,
-          name: '公告',
-          component_key: 'Notice',
-          update_time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-        },
-        {
-          group_id: basis_id,
-          name: '轮播图',
-          component_key: 'swip',
-          update_time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-        },
-        {
-          group_id: basis_id,
-          name: '横向滑动',
-          component_key: 'slider',
-          update_time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-        },
-        {
-          group_id: basis_id,
-          name: '辅助线',
-          component_key: 'AssistLine',
-          update_time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-        },
-        {
-          group_id: basis_id,
-          name: '浮标',
-          component_key: 'FloatLayer',
-          update_time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-        },
-        {
-          group_id: basis_id,
-          name: '客服',
-          component_key: 'OnlineService',
-          update_time: dayjs().format('YYYY-MM-DD HH:mm:ss')
-        }
-      ]
-      await model.component_definition.bulkCreate(componentData)
-      await t.commit()
-    } catch(err) {
-      await t.rollback()
-    }
-  }
-
-  static async addPageJson(data) {
-    const { model } = this
-    const t = await model.sequelize.transaction();
-
-    try {
-      // 获取页面数据
-      const { name, cover, shareDesc, shareImage, componentList, creator = "" } = data
-      const pageString = _.omit(data, ['name', 'cover', 'componentList', 'shareDesc', 'shareImage'])
-      const insert_page = await model.page.create({
-        application_id: 1,
-        name,
-        cover,
-        page_type: 0, //0标准活动；1首页
-        is_abled: 0, // 默认未启用
-        page_string: JSON.stringify(pageString),
-        create_time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-        update_time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-        creator,
-        share_desc: shareDesc,
-        share_image: shareImage
-      })
-      // 处理组件数据
-      const componentData = componentList.map(data => {
-        const { sort } = data
-        return {
-          page_id: insert_page.id,
-          component_string: JSON.stringify(data.data),
-          name: data.name,
-          sort
-        }
-      })
-      // 批量插入
-      await model.components.bulkCreate(componentData)
-      await t.commit()
-      return this.success({id: insert_page.id})
-    } catch(err) {
-      console.log(err)
-      await t.rollback()
-      return this.error('接口调用失败')
-    }
-  }
-
-  static async updateCmsJson(data) {
-    const { model } = this
-    const t = await model.sequelize.transaction();
-    const updateId = data.id
-    try {
-      // 获取页面数据
-      const { name, cover, componentList, shareDesc, shareImage } = data
-      const pageString = _.omit(data, ['name', 'cover', 'componentList', 'shareDesc', 'shareImage'])
-      console.log(pageString, 'pageString')
-      // 更新页面数据
-      await model.page.update({
-        name,
-        cover,
-        page_string: JSON.stringify(pageString),
-        update_time: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-        share_desc: shareDesc,
-        share_image: shareImage
-      },{
-        where: {
-          id: updateId
-        }
-      })
-      // 组件数据先删除后新增
-      await model.components.destroy({
-        where: {
-          page_id: updateId,
-        }
-      })
-
-      // 处理组件数据
-      const componentData = componentList.map(data => {
-        const { sort, name } = data
-        const componentString = _.omit(data, ['sort'])
-        return {
-          page_id: updateId,
-          component_string: JSON.stringify(componentString.data),
-          sort,
-          name
-        }
-      })
-      // 批量插入
-      await model.components.bulkCreate(componentData)
-
-      await t.commit()
-    } catch(err) {
-      await t.rollback()
-      return this.error('接口调用失败')
-    }
-    // 更新page表数据
-    // await
-  }
-
-  static async getComponentCategory () {
-    const { model } = this
-    try {
-      const result = await model.component_group.findAll({
-        attributes: {
-          exclude: ['update_time']
-        },
-        include: [
-          {
-            model: model.component_definition,
-            attributes: {
-              exclude: ['update_time','group_id']
-            },
-          }
-        ]
-      })
-      return result
-    } catch(err) {
-      console.log(err)
-    }
-  }
-
-  static async deleteComponent () {
-
-  }
-
-  static async getPageData(data) {
-    const { model } = this
-    const { id, type } = data
-    try {
-
-      const res = await model.page.findOne({
-        include: [
-          {
-            model: model.components,
-          }
-        ],
-        where: {
-          id
-        },
-        order: [[sequelize.col('sort'), 'asc']] // 根据sort正序排列
-      })
-      let result = {}
-      if (res) {
-        const { name, color, bgColor, cover, components, share_desc, share_image, page_string} = res
-        console.log(page_string)
-        
-        const pageData = {
-          id: res.id,
-          name,
-          color,
-          bgColor,
-          cover,
-          shareDesc: share_desc,
-          shareImage: share_image,
-          backgroundColor: page_string.backgroundColor,
-          backgroundImage: page_string.backgroundImage
-        }
-        // 组件数据处理
-        const componentList = []
-
-
-        components.forEach(({ component_string, name, id }) => {
-          const componentData = _.pick(component_string, ['id', 'name'])
-          componentData.data = _.omit(component_string, ['id', 'name'])
-          componentData.name = name
-          componentData.id = id
-          // 如果当前为cms，生效时间直接返回，H5则返回isDisplay
-          if (type == 'cms') {
-            componentList.push(componentData)
-          } else {
-            // 如果填写生效时间，则判断组件是否在时间范围内
-            if (component_string.validTime.length) {
-              if (dayjs(component_string.validTime[0]).isBetween(new Date().getTime(), component_string.validTime[1])) {
-                componentList.push(componentData)
-              }
-            } else {
-              componentList.push(componentData)
-            }
-          }
-        })
-        result = {
-          ...pageData,
-          componentList
-        }
-      }
-      return result
-    } catch(err) {
-      console.log(err)
-      return err
-
-    }
-  }
-
-  static async getPageList(data) {
-    const { pageNum, pageSize, name, id, creator, is_abled, startDate, endDate } = data
-    const { Op } = this.Sequelize
-    try {
-      const where = {}
-      if (name) {
-        where.name = {
-          [Op.like]: `%${name}%`
-        }
-      }
-      if (id) {
-        where.id = id
-      }
-      if (creator) {
-        where.creator = creator
-      }
-      if (is_abled) {
-        where.is_abled = is_abled
-      }
-      if (startDate || endDate) {
-        where.create_time = {
-          [Op.lt]: startDate,
-          [Op.gt]: endDate
-        }
-      }
-      const page = await model.page.findAndCountAll({
-        where,
-        offset: (pageNum-1)*pageSize,
-        limit: pageSize,
-        order: [['update_time', 'desc']]
-      })
-      return {
-        list: page.rows,
-        total: page.count,
-        pageNum,
-        pageSize
-      }
-    } catch (err) {
-      console.log(err)
-      return null
-    }
-  }
-
-  static async deletePage(id) {
-    const { model } = this
-    try {
-      // 先删除关联组件
-      await model.components.destroy({
-        where: {
-          page_id: id,
-        }
-      })
-      // 删除页面
-      await model.page.destroy({
-        where: {
-          id,
-        }
-      })
-      return {}
-    } catch(err) {
-      console.log(err)
-      return null
-    }
-  }
-
-  static async updatePageStatus (id, is_abled) {
-    const { model } = this
-    try {
-      await model.page.update({
-        is_abled
-      }, {
-        where: { id }
-      })
-      return {}
-    } catch (err) {
-      console.log(err)
-      return null
-    }
-  }
-
-  static async getPageAll () {
-    try {
-      const page = await model.page.findAll({
-        where: {
-          is_abled: 1
-        },
-        attributes: ['id', 'name']
-      })
-      return page
-    } catch(err) {
-      console.log(err)
-      return null
-    }
-  }
-  static async login (data) {
-    const { username, password } = data
-    try {
-      const user = await model.user.findOne({
-        where: {
-          user_name: username
-        }
-      })
-      const secret = 'cmsSecret';
-      const hash = createHmac('sha256', secret)
-                  .update(password)
-                  .digest('hex');
-      if (hash === user.password) {
-        return {
-          token: hash,
-          username: user.user_name
-        }
-      }
-      return null
-    } catch(err) {
-      return null
-    }
-  }
+const model = require('../models')
+const { Op } = require('sequelize')
+const { randomBytes, createHash } = require('crypto')
+const passwords = require('../utils/password')
+const sanitizeHtml = require('sanitize-html')
+function clean(value, key) {
+ if(typeof value === 'string' && key !== 'content') return /^\s*(javascript|vbscript|data):/i.test(value) ? '' : value
+ if(typeof value === 'string') return sanitizeHtml(value, {allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']), allowedAttributes:{...sanitizeHtml.defaults.allowedAttributes, '*':['class','style'],img:['src','alt','width','height']},allowedSchemes:['http','https'],allowedStyles:{'*':{'color':[/^#[0-9a-f]+$/i,/^rgb\([\d,\s]+\)$/], 'text-align':[/^(left|right|center|justify)$/], 'font-size':[/^\d+(px|em|%)$/]}}})
+ if(Array.isArray(value)) return value.map(v=>clean(v,key))
+ if(value && typeof value==='object') return Object.fromEntries(Object.entries(value).map(([k,v])=>[k,clean(v,k)]))
+ return value
 }
-
-module.exports = CMSService
+function validate(data) {
+ if(!data || typeof data.name!=='string' || !data.name.trim() || data.name.length>128) throw Object.assign(new Error('页面名称需为 1–128 字'),{status:400})
+ if(!Array.isArray(data.componentList) || data.componentList.length>500) throw Object.assign(new Error('组件列表无效'),{status:400})
+ for(const c of data.componentList) if(!c || typeof c.name!=='string' || c.name.length>20 || !c.data || typeof c.data!=='object') throw Object.assign(new Error('组件数据无效'),{status:400})
+}
+class CMSService extends BaseService {
+ static async save(data, update) {
+  validate(data)
+  const {name,cover='',shareDesc='',shareImage='',componentList,creator='',id,params,...rest}=clean(data)
+  const result = await model.sequelize.transaction(async transaction=>{
+   let page
+   const values={name,cover,share_desc:shareDesc,share_image:shareImage,page_string:JSON.stringify(rest),update_time:new Date()}
+   if(update){
+    page=await model.page.findByPk(id,{transaction,lock:transaction.LOCK.UPDATE})
+    if(!page) throw Object.assign(new Error('页面不存在'),{status:404})
+    await page.update(values,{transaction})
+    await model.components.destroy({where:{page_id:id},transaction})
+   }else page=await model.page.create({...values,application_id:1,page_type:0,is_abled:0,create_time:new Date(),creator},{transaction})
+   await model.components.bulkCreate(componentList.map((c,i)=>({page_id:page.id,name:c.name,sort:i,component_string:JSON.stringify(c.data)})),{transaction})
+   return {id:page.id}
+  })
+  return this.success(result)
+ }
+ static addPageJson(data){return this.save(data,false)}
+ static updateCmsJson(data){return this.save(data,true)}
+ static async getPageData({id,type}) {
+  const page=await model.page.findByPk(id,{include:[model.components],order:[[model.components,'sort','ASC']]})
+  if(!page || (type==='h5' && !page.is_abled)) throw Object.assign(new Error('页面未发布或不存在'),{status:404})
+  const componentList=page.components.filter(c=>{
+   if(type==='cms')return true
+   const t=c.component_string.validTime
+   return !Array.isArray(t)||t.length!==2||(Date.now()>=new Date(t[0]).getTime()&&Date.now()<=new Date(t[1]).getTime())
+  }).map(c=>({id:c.id,name:c.name,sort:c.sort,data:c.component_string}))
+  return {...page.page_string,id:page.id,name:page.name,cover:page.cover,shareDesc:page.share_desc,shareImage:page.share_image,componentList}
+ }
+ static async getPageList(data){
+  const pageNum=Math.max(1,Number(data.pageNum)||1),pageSize=Math.max(1,Math.min(100,Number(data.pageSize)||10)),where={}
+  if(data.name)where.name={[Op.like]:`%${data.name}%`}
+  if(data.id)where.id=data.id
+  if(data.creator)where.creator=data.creator
+  if(data.is_abled!==undefined && data.is_abled!=='')where.is_abled=Number(data.is_abled)
+  if(data.startDate||data.endDate){where.create_time={};if(data.startDate)where.create_time[Op.gte]=data.startDate;if(data.endDate)where.create_time[Op.lte]=data.endDate}
+  const result=await model.page.findAndCountAll({where,offset:(pageNum-1)*pageSize,limit:pageSize,order:[['update_time','DESC'],['id','DESC']]})
+  return {list:result.rows,total:result.count,pageNum,pageSize}
+ }
+ static async deletePage(id){
+  await model.sequelize.transaction(async transaction=>{await model.components.destroy({where:{page_id:id},transaction});await model.page.destroy({where:{id},transaction})});return {}
+ }
+ static async updatePageStatus(id,is_abled){
+  if(![0,1].includes(is_abled))throw Object.assign(new Error('无效的发布状态'),{status:400})
+  const page=await model.page.findByPk(id);if(!page)throw Object.assign(new Error('页面不存在'),{status:404})
+  await page.update({is_abled,update_time:new Date()});return {}
+ }
+ static getPageAll(){return model.page.findAll({where:{is_abled:1},attributes:['id','name']})}
+ static async login({username,password}){
+  const user=await model.user.findOne({where:{user_name:username}})
+  if(!user||!passwords.verify(password,user.password))return null
+  const token=randomBytes(32).toString('hex')
+  await model.session.destroy({where:{expires_at:{[Op.lt]:new Date()}}})
+  await model.session.create({token_hash:createHash('sha256').update(token).digest('hex'),user_id:user.id,expires_at:new Date(Date.now()+8*60*60*1000)})
+  return {token,username:user.user_name}
+ }
+}
+module.exports=CMSService

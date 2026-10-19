@@ -1,8 +1,2 @@
-import axios from '../utils/axios'
-
-export function  findSkuInfoByIds(data) {
-    return axios.post(
-        `/jv-mall-product/sku/findSkuInfoByIds`,
-        data
-      )
-}
+import nodeFetch from '../utils/nodeFetch'
+export const findSkuInfoByIds = data => nodeFetch.post('/products/by-ids',data).then(r=>r.data)

@@ -11,3 +11,6 @@ cms-node/cms.sql
 **/data/
 **/.env
 !**/.env.example
+
+.local/
+**/uploads/

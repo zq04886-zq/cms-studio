@@ -1,0 +1,12 @@
+**/node_modules
+**/dist
+**/.env
+.env
+.git
+.local
+**/data
+**/logs
+**/*.log
+cms-node/config/config.env.*.js
+cms-node/utils/ftp.js
+cms-node/cms.sql

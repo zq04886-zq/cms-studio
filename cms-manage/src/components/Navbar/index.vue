@@ -1,12 +1,6 @@
 <template>
   <div :class="['navbar', {'login-module': isLoginModule}]">
-    <hamburger
-      v-if="!isLoginModule"
-      id="hamburger-container"
-      :is-active="sidebar.opened"
-      class="hamburger-container"
-      @toggleClick="toggleSideBar"
-    />
+
     <div v-if="isLoginModule" class="logo-wrapper">
       <img class="logo" src="../../assets/logo.png"><span class="system-name">{{ systemName }}</span>
     </div>
@@ -39,12 +33,11 @@
 <script>
 // import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
-import Hamburger from '@/components/Hamburger'
+import request from '@/utils/request'
 
 export default {
   components: {
-    Breadcrumb,
-    Hamburger
+    Breadcrumb
   },
   props: {
     systemName: {
@@ -85,7 +78,8 @@ export default {
     toggleDropdown(e) {
       this.isDropdownOpen = e
     },
-    logout() {
+    async logout() {
+      try {await request.post('/atlas-cms/logout')} catch(e) { return }
       localStorage.removeItem('token')
       window.location.href = location.origin + '/cms-manage/#/login'
     }

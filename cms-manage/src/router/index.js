@@ -90,4 +90,7 @@ export function resetRouter() {
   router.matcher = newRouter.matcher // reset router
 }
 
+router.beforeEach((to, from, next) => {
+  if(to.path!=='/login'&&!localStorage.getItem('token'))next('/login');else next()
+})
 export default router

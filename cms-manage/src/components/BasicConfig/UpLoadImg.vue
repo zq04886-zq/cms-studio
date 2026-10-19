@@ -22,7 +22,7 @@
         +&nbsp;上传图片
       </el-button>
       <div slot="tip" class="el-upload__tip">
-        只能上传jpg/png文件，且不超过500kb
+        只能上传jpg/png文件，且不超过2MB
       </div>
     </el-upload>
 
@@ -108,9 +108,11 @@ export default {
   watch: {
     // 模态框第一次显示时获取列表数据
     dialogImageVisible(newVal, oldVal) {
-      if (newVal && this.groupList.length === 0) {
+      if (newVal) {
         // 改图片接口暂时没有
-        // this.getGroup()
+        this.nowPage = 1
+        this.selectPicUrl = ''
+        this.getGroup()
       }
     }
   },
@@ -134,7 +136,7 @@ export default {
           // 获取第一个分组的图片列表
           this.changeGroup(list[0].uuid)
         }
-      })
+      }).finally(() => {this.groupLoading=false})
     },
     // 切换选择的分组
     changeGroup(id) {
@@ -162,7 +164,7 @@ export default {
         this.loading = false
         this.list = res.returnMessage
         this.total = res.pager.totalNum
-      })
+      }).finally(() => {this.loading=false})
     },
     // 图片数据翻页
     pageChange(val) {
@@ -199,7 +201,7 @@ export default {
         this.$message.error('上传图片只能是 JPG/PNG 格式!')
       }
       if (!isLt500) {
-        this.$message.error('上传图片大小不能超过 500kb!')
+        this.$message.error('上传图片大小不能超过 2MB!')
       }
       if (isJPG && isLt500) {
         this.uploading = true
@@ -211,6 +213,7 @@ export default {
     // 上传图片成功的方法
     dosuccess(response, file, fileList) {
       this.uploading = false
+      if(response.code!==10000){this.$message.error(response.message||'上传失败');return}
       this.$emit('upLoadImgSuccess', response.data)
       this.dialogHide()
     },

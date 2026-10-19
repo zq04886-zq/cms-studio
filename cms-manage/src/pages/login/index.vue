@@ -7,9 +7,7 @@
       class="login-form"
       autocomplete="on" label-position="left">
       <div class="title-container">
-        <h3 class="title">
-          Cms-Manage内容管理系统
-        </h3>
+        <div class="studio-wordmark"><span class="studio-glyph">／</span> Studio</div><h1 class="title">登录你的工作空间</h1><p class="login-caption">设计、预览、发布。一处完成。</p>
       </div>
       <el-form-item prop="username">
         <el-input
@@ -27,6 +25,7 @@
           :type="passwordType"
           placeholder="密码"
           name="password"
+          @keyup.enter.native="handleLogin"
         />
       </el-form-item>
       <el-button

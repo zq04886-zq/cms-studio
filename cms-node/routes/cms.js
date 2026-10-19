@@ -14,7 +14,7 @@ module.exports = (app) => {
   router.post('/deletePage', controller.cms.deletePage) // cms删除页面
   router.post('/updatePageStatus', controller.cms.updatePageStatus) // 更新页面上架状态
   router.get('/getPageAll', controller.cms.getPageAll) // 获取上线的活动页
-  router.post('/file/upload', controller.cms.fileUpload)
+  router.use(require('./media'))
   router.post('/login', controller.cms.login) // 登录
   return router
 }

@@ -1,0 +1,20 @@
+FROM node:22-bookworm-slim AS build
+WORKDIR /app
+COPY cms-manage/package*.json cms-manage/
+COPY crs/package*.json crs/
+RUN cd cms-manage && npm ci --legacy-peer-deps --ignore-scripts && cd ../crs && npm ci --legacy-peer-deps --ignore-scripts
+COPY cms-manage cms-manage
+COPY crs crs
+RUN cd cms-manage && node --openssl-legacy-provider node_modules/@vue/cli-service/bin/vue-cli-service.js build && cd ../crs && node --openssl-legacy-provider node_modules/@vue/cli-service/bin/vue-cli-service.js build
+FROM node:22-bookworm-slim
+WORKDIR /app/cms-node
+COPY cms-node/package*.json ./
+RUN npm ci --omit=dev --ignore-scripts
+COPY cms-node ./
+COPY --from=build /app/cms-manage/dist /app/cms-manage/dist
+COPY --from=build /app/crs/dist /app/crs/dist
+RUN mkdir -p /app/cms-node/data/uploads && chown -R node:node /app
+USER node
+ENV NODE_ENV=production HOST=0.0.0.0 PORT=3300
+EXPOSE 3300
+CMD ["node", "index.js"]

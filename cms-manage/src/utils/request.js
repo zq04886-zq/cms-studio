@@ -1,52 +1,18 @@
 import axios from 'axios'
 import { baseURL } from '@/config'
 import { Message } from 'element-ui'
-
-// 创建请求实例
-const service = axios.create({
-  baseURL, // url = base url + request url
-  // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 20000 // request timeout
-})
-
-// 添加请求拦截器
-service.interceptors.request.use(
-  config => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      config.headers['X-token'] = token
-    }
-    return config
-  },
-  error => {
-    return Promise.reject(error)
-  }
-)
-
-// 添加响应拦截器
-service.interceptors.response.use(
-  response => {
-    const res = response.data
-    console.log(res, 'res')
-    // 接口请求失败提示
-    if (res.code !== 10000) {
-      Message.error(res.message);
-    }
-    if (res.code === -2) {
-      localStorage.removeItem('token')
-      window.location.href = location.origin + '/cms-manage/#/login'
-    }
-    return res
-  },
-  error => {
-    console.log('err' + error) // for debug
-    // Message({
-    //   message: error.message,
-    //   type: 'error',
-    //   duration: 5 * 1000
-    // })
-    return Promise.reject(error)
-  }
-)
-
+const service=axios.create({baseURL,timeout:20000})
+service.interceptors.request.use(config=>{const token=localStorage.getItem('token');if(token)config.headers['X-token']=token;return config})
+function failure(error){
+ const data=error.response&&error.response.data
+ const message=(data&&data.message)||error.message||'请求失败'
+ Message.error(message)
+ if(error.response&&error.response.status===401){localStorage.removeItem('token');window.location.hash='#/login'}
+ return Promise.reject(new Error(message))
+}
+service.interceptors.response.use(response=>{
+ const res=response.data
+ if(res.code!==10000){Message.error(res.message||'请求失败');return Promise.reject(new Error(res.message||'请求失败'))}
+ return res
+},failure)
 export default service

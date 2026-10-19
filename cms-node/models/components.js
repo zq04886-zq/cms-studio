@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     component_string: {
-      type: DataTypes.STRING(500),
+      type: DataTypes.TEXT('long'),
       allowNull: false,
       get () {
         const str = this.getDataValue('component_string')

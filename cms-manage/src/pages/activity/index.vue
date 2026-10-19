@@ -1,230 +1,37 @@
 <template>
-  <fc-table-search
-    ref="table"
-    v-model="tableData"
-    class-name="searchListPage"
-    :form-items="formItems"
-    :table-columns="tableColumns"
-    :form-config="{'label-width': '100px'}"
-    @requestMethod="getTableData"
-  >
-    <!-- 搜索按钮区域 -->
-    <template slot="isCompSearch">
-      <!-- <fc-button :loading="exportDetailLoading" debounce @click="exportDetailExcel">导出</fc-button> -->
-    </template>
-    <!-- 操作表格区域 -->
-    <template #handleDetail="{ row }">
-      <el-button
-        type="text"
-        size="mini"
-        @click="onEdit(row.id)"
-      >
-        编辑
-      </el-button>
-      <el-button
-        size="mini"
-        type="text"
-        @click="onToggleActivity(row)"
-      >
-        {{ row.isAbled === 0 ? '上线' : '下线' }}
-      </el-button>
-      <el-button
-        size="mini"
-        type="text"
-        @click="onPreview(row.id, row.title)"
-      >
-        预览
-      </el-button>
-      <el-button size="mini" type="text" @click="onDelete(row.id)">
-        删除
-      </el-button>
-    </template>
-    <template slot="handleLeft">
-      <el-button type="primary" @click="onAdd">
-        <i class="el-icon-plus" />新增页面
-      </el-button>
-    </template>
-  </fc-table-search>
+ <section class="studio-pages">
+  <header class="pages-heading"><div><h1>我的页面</h1><p>你的想法，正在这里成形。</p></div><el-button type="primary" icon="el-icon-plus" @click="createPage">新建页面</el-button></header>
+  <form class="pages-toolbar" @submit.prevent="search"><el-input v-model="query.name" placeholder="搜索页面名称" prefix-icon="el-icon-search" clearable @clear="search"/><el-select v-model="query.isAbled" placeholder="所有状态" clearable @change="search"><el-option label="草稿" :value="0"/><el-option label="已发布" :value="1"/></el-select><el-button native-type="submit">搜索</el-button></form>
+  <div class="pages-table-wrap">
+   <el-table v-loading="loading" :data="pages" empty-text="还没有页面，点击右上角新建" class="pages-table">
+    <el-table-column label="页面名称" min-width="220"><template slot-scope="scope"><router-link class="page-title-link" :to="{path:'/decorate',query:{id:scope.row.id}}"><i class="el-icon-document"/>{{scope.row.name}}</router-link><small class="page-id">#{{scope.row.id}}</small></template></el-table-column>
+    <el-table-column label="状态" width="110"><template slot-scope="scope"><span class="page-state" :class="{published:scope.row.is_abled}"><i/>{{scope.row.is_abled?'已发布':'草稿'}}</span></template></el-table-column>
+    <el-table-column label="更新时间" prop="update_time" min-width="170"/>
+    <el-table-column label="操作" width="250"><template slot-scope="scope"><div class="page-actions"><el-button type="text" @click="editPage(scope.row.id)">编辑</el-button><el-button type="text" :loading="busy===scope.row.id" @click="toggle(scope.row)">{{scope.row.is_abled?'下线':'上线'}}</el-button><el-button type="text" @click="preview(scope.row.id)">预览</el-button><el-button type="text" @click="remove(scope.row)">删除</el-button></div></template></el-table-column>
+   </el-table>
+  </div>
+  <footer class="pages-pagination"><span>{{total}} 个页面</span><el-pagination :current-page="pageNum" :page-size="10" :total="total" layout="prev, pager, next" @current-change="changePage"/></footer>
+ </section>
 </template>
-
 <script>
-// import { checkBatchPageList } from '@/api/accountCheck/recordQuery'
-// import { isEmpty } from '@/utils/index'
-import {
-  getCmsPageList,
-  updateStatus,
-  deletePage
-} from '@/api/activity'
-import { forEach } from 'lodash-es'
-// import TableFlexHeight from '@/mixins/tableFlexHeight'
-// import { activityStatus } from '@/config/activity'
+import {getCmsPageList,updateStatus,deletePage} from '@/api/activity'
 export default {
-  components: {},
-  data () {
-    return {
-      tableData: { } // 收集查询
-    }
+ name:'Pages',data:()=>({query:{name:'',isAbled:''},pageNum:1,pages:[],total:0,loading:false,busy:null}),
+ created(){this.load()},
+ methods:{
+  async load(){this.loading=true;try{const r=await getCmsPageList({...this.query,pageNum:this.pageNum,pageSize:10});this.pages=r.data.list;this.total=r.data.total}catch(e){}finally{this.loading=false}},
+  search(){this.pageNum=1;this.load()},changePage(page){this.pageNum=page;this.load()},
+  createPage(){this.$store.commit('SET_INIT_PAGE_DATA');this.$router.push('/decorate')},
+  editPage(id){this.$router.push({path:'/decorate',query:{id}})},
+  preview(id){const url=this.$router.resolve({path:'/preview',query:{id}});window.open(url.href,'_blank','noopener')},
+  async toggle(page){
+   if(page.is_abled){try{await this.$confirm(`下线“${page.name}”后，公开链接将无法访问。`,'下线页面',{confirmButtonText:'下线',cancelButtonText:'取消',type:'warning'})}catch(e){return}}
+   this.busy=page.id;try{await updateStatus({id:page.id,isAbled:page.is_abled?0:1});this.$message.success(page.is_abled?'下线成功':'上线成功');await this.load()}catch(e){}finally{this.busy=null}
   },
-  computed: {
-    // 搜索表单定义
-    formItems () {
-      return [
-        { comp: 'input', prop: 'name', label: '页面标题', clearable: true },
-        { comp: 'select',
-          prop: 'isAbled',
-          label: '页面状态',
-          options: [{
-            value: 0,
-            label: '下线'
-          }, {
-            value: 1,
-            label: '上线'
-          }],
-          includeAll: false }
-      ]
-    },
-    // 表格定义
-    tableColumns() {
-      return [
-        { prop: 'id', label: '页面ID' },
-        { prop: 'name', label: '页面标题' },
-        { prop: 'status',
-          label: '页面状态'
-          // width: 80
-        },
-        { prop: 'create_time',
-          label: '创建时间'
-          // width: 120
-        },
-        { prop: 'update_time',
-          label: '更新时间'
-          // width: 120
-        },
-        {
-          label: '操作',
-          fixed: 'right',
-          // width: 220,
-          slotName: 'handleDetail'
-          // render: (h, {row}) => {
-          //   return <div>
-          //     <el-button size="mini" type="text" onClick="onEdit(row.id)">编辑</el-button>
-          //     <el-button size="mini" type="text" onClick="onToggleActivity(row)">{ row.isAbled === 0 ? '上线' : '下线' }</el-button>
-          //     <el-button size="mini" type="text" onClick="onPreview(row.id, row.title)">预览</el-button>
-          //     <el-button size="mini" type="text" onClick="onDelete(row.id)">删除</el-button>
-
-          //   </div>
-          // }
-        }
-      ]
-    }
-  },
-  created() { },
-
-  methods: {
-    // 请求数据
-    async getTableData ({ current, size, total, ...tableData }, fn) {
-      try {
-        let { ...params } = tableData
-        params.pageNum = current
-        params.pageSize = size
-        let res = await getCmsPageList(params)
-        let { list, total } = res.data
-
-        this.tableData.total = total
-        this.tableData.list = list || []
-        forEach(list, item => {
-          item.status = item.is_abled ? '上线' : '下线'
-        })
-        this.formatData()
-        fn({
-          data: list,
-          total: total
-        })
-      } catch (error) {
-        fn({message: error.message})
-      }
-    },
-
-    formatData() {
-      this.tableData.list.forEach((item) => {
-        item.isAbled = item.is_abled
-      })
-    },
-    // 编辑
-    onEdit(id) {
-      console.log(this.$router, 'router')
-      this.$router.open({path: '/decorate', query: { id }})
-    },
-
-    // 上下线活动
-    onToggleActivity(row) {
-      if (row.isAbled === 0) {
-        this.online(row, 1)
-      } else {
-        this.offline(row, 0)
-      }
-    },
-    offline(row, isAbled) {
-      this.$confirm(`是否确定下线活动【${row.name}】?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        closeOnClickModal: false
-      }).then(() => {
-        updateStatus({id: row.id, isAbled})
-          .then(() => {
-            this.$message.success('下线成功')
-            this.$refs.table.onRefresh(true)
-          })
-          .catch(err => {
-            this.$message.warning(`操作失败: ${err.message}`, 'warning')
-          })
-      }).catch(() => {})
-    },
-    online(row, isAbled) {
-      this.$set(row, 'loading', true)
-      updateStatus({id: row.id, isAbled})
-        .then(() => {
-          this.$message.success('上线成功')
-          this.$refs.table.onRefresh(true)
-        })
-        .catch(err => {
-          this.$message.warning(`操作失败: ${err.message}`, 'warning')
-        }).finally(() => {
-          this.$set(row, 'loading', false)
-        })
-    },
-    // 删除活动
-    onDelete(id) {
-      this.$confirm('是否确定删除?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        closeOnClickModal: false
-      })
-        .then(() => {
-          deletePage({ id })
-            .then(() => {
-              this.$message.success('删除成功')
-              this.$refs.table.onRefresh(true)
-            })
-            .catch(err => {
-              this.$message.warning(`删除失败：${err.message}`, 'warning')
-            })
-        })
-        .catch(() => {})
-    },
-
-    // 新增活动页
-    onAdd() {
-      this.$store.commit('SET_INIT_PAGE_DATA')
-      this.$router.open('/decorate')
-    },
-    // 活动预览
-    onPreview(id) {
-      let url = this.$router.resolve({ path: `/preview`, query: { id, data: this.$store.state.wxParams } })
-      window.open(url.href, '_blank')
-    }
+  async remove(page){
+   try{await this.$confirm(`确定删除“${page.name}”？此操作不可撤销。`,'删除页面',{confirmButtonText:'删除',cancelButtonText:'取消',type:'warning'})}catch(e){return}
+   try{await deletePage({id:page.id});this.$message.success('删除成功');if(this.pages.length===1&&this.pageNum>1)this.pageNum--;await this.load()}catch(e){}
   }
+ }
 }
 </script>

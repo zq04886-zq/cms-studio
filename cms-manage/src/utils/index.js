@@ -52,7 +52,9 @@ export class Messager {
    * @param {Object} value  发送的数据
    */
   emit(type, value) {
-    var win = document.getElementById('previewIframe').contentWindow
+    const frame = document.getElementById('previewIframe')
+    if (!frame || !frame.contentWindow) return this
+    var win = frame.contentWindow
     win.postMessage({
       type, value
     }, this.targetOrigin)

@@ -9,20 +9,13 @@
     </ComGroup>
     <ComGroup title="内容" :content-block="true">
       <quill-editor ref="myTextEditor" v-model="configData.content" :options="editorOption" />
-      <Uploader
-        ref="quillUploader"
-        class="avatar-uploader"
-        :show-file-list="false"
-        list-type="picture"
-        :max-size="upload.maxSize"
-        :limit="upload.limit"
-        :on-change="onChangeQuill"
-      />
+      <el-upload class="avatar-uploader" :action="uploadUrl" :headers="uploadHeaders" :show-file-list="false" accept="image/png,image/jpeg" :on-success="onImageUploaded"><button type="button">上传图片</button></el-upload>
     </ComGroup>
   </div>
 </template>
 
 <script>
+import {upLoadUrl} from '@/api/index'
 import ComGroup from '@/components/BasicUi/ComGroup'
 
 export default {
@@ -31,6 +24,8 @@ export default {
   props: ['parmes'],
   data() {
     return {
+      uploadUrl:upLoadUrl,
+      uploadHeaders:{'X-token':localStorage.getItem('token')},
       // 当前组件数据
       configData: JSON.parse(JSON.stringify(this.parmes)),
       // 初始背景颜色
@@ -85,6 +80,14 @@ export default {
     }
   },
   methods: {
+    onImageUploaded(response) {
+      if(response.code!==10000){this.$message.error(response.message||'上传失败');return}
+      const quill=this.$refs.myTextEditor.quill
+      const selection=quill.getSelection()
+      const index=selection?selection.index:quill.getLength()
+      quill.insertEmbed(index,'image',response.data)
+      quill.setSelection(index+1)
+    },
     // 富文本组件图片上传
     onChangeQuill(file, fileList) {
       if (file.status !== 'finished') return

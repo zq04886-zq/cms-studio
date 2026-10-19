@@ -1,7 +1,7 @@
 const BaseController = require('./base')
-const { orderServer } = require('../api')
+
 const formidable = require('formidable')
-const ftp = require('../utils/ftp')
+
 const dayjs = require('dayjs')
 
 
@@ -20,7 +20,7 @@ class CmsController extends BaseController {
       return this.error(this.getValidate(validate))
     }
 
-    const result = await this.app.service.cms.addPageJson(req.body)
+    const result = await this.app.service.cms.addPageJson({...req.body, creator:req.user.user_name})
     return this.response(result)
   }
 
@@ -35,8 +35,8 @@ class CmsController extends BaseController {
     if (validate) {
       return this.error(this.getValidate(validate))
     }
-    await this.app.service.cms.updateCmsJson(req.body)
-    return this.success()
+    const result = await this.app.service.cms.updateCmsJson(req.body)
+    return this.response(result)
   }
 
   async getPageJson () {
@@ -124,21 +124,6 @@ class CmsController extends BaseController {
   async getPageAll () {
     const result = await this.app.service.cms.getPageAll()
     return this.success(result)
-  }
-
-  async fileUpload() {
-    const { req, res } = this
-    const form = formidable({ multiples: true });
-    form.parse(req, (err, fields, files) => {
-      if (err) {
-        next(err);
-        return;
-      }
-      ftp(files.file.filepath, files.file.originalFilename).then(() => {
-        return this.success(`http://159.75.169.224:6600/${files.file.originalFilename}`)
-      })
-    });
-   
   }
 
   async login() {

@@ -13,6 +13,7 @@
       </div>
     </div>
     <!-- 领取券包弹出框 -->
+    <p v-if="errorMessage" class="page-error">{{errorMessage}}</p>
     <Coupon />
     <!-- 领取单券弹出框 -->
     <CouponSingle />
@@ -66,7 +67,7 @@ export default {
   },
   data() {
     return {
-      pageData: {}
+      pageData: {}, errorMessage:''
     }
   },
   computed: {
@@ -96,7 +97,7 @@ export default {
       vehicle._saveCarToLocal(data.myCar)
     }
     // 获取页面数据
-    getH5PageJson({id}).then(res => {
+    getH5PageJson({id, draft:this.$route.query.draft==='1'}).then(res => {
       document.title = res.data.name // 小程序中web-view显示页面名称
       this.pageData = res.data
       // 如果有自定义分享参数，则将分享参数传递到h5
@@ -106,9 +107,9 @@ export default {
           shareDesc,
           shareImage
         }
-        wx.miniProgram.postMessage({data})
+        if (/MicroMessenger/i.test(navigator.userAgent)) wx.miniProgram.postMessage({data})
       }
-    })
+    }).catch(() => {this.errorMessage='页面暂不可用，请确认已经发布。'})
   },
   methods: {
     styleObject(item) {

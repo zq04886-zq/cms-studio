@@ -6,7 +6,7 @@ const basename = path.basename(__filename) // 当前模块文件名
 const config = require(__dirname + '/../config').db
 const db = {}
 const { database, username, password } = config
-const sequelize = new Sequelize(database, username, password, _.pick(config, ['port', 'dialect', 'host']))
+const sequelize = new Sequelize(database, username, password, {..._.pick(config, ['port', 'dialect', 'host']), logging:false})
 
 fs.readdirSync(__dirname)
   .filter((file) => {

@@ -12,10 +12,11 @@ module.exports = {
     open: true,
     openPage: 'cms-manage/',
     proxy: {
-      '/api/atlas-cms': {
+      '/uploads': {target:'http://127.0.0.1:3300'},
+      '/atlas-cms': {
         target: 'http://127.0.0.1:3300',
         pathRewrite: {
-          '^/api/atlas-cms': '/atlas-cms'
+          '^/atlas-cms': '/atlas-cms'
         }
       }
       // '/api': {

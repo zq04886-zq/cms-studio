@@ -42,9 +42,9 @@ const createProxy = (controllerMap, app) => {
         if (!target[name].isDir) {
           return new Proxy(target[name], {
             get(target, name) {
-              return (req, res) => {
+              return (req, res, next) => {
                 if (Object.getOwnPropertyNames(target.value.prototype).includes(name)) {
-                  new target.value(req, res, app)[name]()
+                  Promise.resolve().then(() => new target.value(req, res, app)[name]()).catch(next)
                 } else {
                   res.send(errMsg('method not exist'))
                 }
@@ -57,7 +57,7 @@ const createProxy = (controllerMap, app) => {
       } else {
         return new Proxy({}, {
           get() {
-            return (req, res) => {
+            return (req, res, next) => {
               res.send(errMsg('controller not exist'))
             }
           }

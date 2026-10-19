@@ -1,5 +1,6 @@
 <template>
   <div class="page-left">
+    <p class="component-help">拖入画布，或双击添加</p>
     <!-- 页面可选组件列表 -->
     <el-collapse v-model="activeNames">
       <el-collapse-item
@@ -15,6 +16,9 @@
             :key="size"
             :class="draggableEnable(component) ? 'drag-enabled' : 'drag-disabled'"
             :draggable="draggableEnable(component)"
+            role="button" tabindex="0"
+            @dblclick="addComponent(component)"
+            @keyup.enter="addComponent(component)"
             @dragstart="onDragstart(component, $event)"
             @dragend="onDragend($event)"
           >
@@ -56,6 +60,9 @@ export default {
   methods: {
     ...mapMutations(['SET_DRAG_STATE', 'SET_DRAG_COMPONENT', 'SET_DRAG_INDEX', 'VIEW_SET_ACTIVE']),
     ...mapActions(['pageChange']),
+    addComponent(component) {
+      if(this.draggableEnable(component))this.pageChange({type:'add',index:this.$store.state.pageData.componentList.length,data:component})
+    },
     // 开始拖动组件
     onDragstart(component, event) {
       console.log('开始拖动组件', component, event)

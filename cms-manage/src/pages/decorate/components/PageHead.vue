@@ -1,8 +1,8 @@
 <template>
   <div class="page-head">
     <a class="go-back" @click="backToList">
-      <img class="logo" src="~@/assets/img/layout/logo.png">
-      返回频道列表页面
+      <span class="studio-glyph small" aria-hidden="true">／</span>
+      返回页面
     </a>
     <div class="page-operate">
       <el-button type="primary" size="medium" :loading="saveLoading"
@@ -11,7 +11,7 @@
         保存
       </el-button>
       <el-button size="medium" :loading="previewLoading" @click="saveAndView">
-        预览
+        保存并预览
       </el-button>
     </div>
   </div>
@@ -37,18 +37,18 @@ export default {
     // 上架并预览
     saveAndView() {
       this.previewLoading = true
-      this.savePage({online: 1}).then(res => {
-        this.$message.success('上架成功')
+      this.savePage().then(res => {
+        this.$message.success('已保存')
         let id = res && res.data ? res.data.id : ''
         if (id) {
-          this.$router.push(`/decorate?id=${id}`)
+          if(String(this.$route.query.id)!==String(id))this.$router.replace(`/decorate?id=${id}`)
         } else {
           // 更新页面，接口参数不返回id，取地址栏id参数
           id = this.$route.query.id
         }
         this.goToView(id)
       }).catch((err) => {
-        this.$message.warning(`上架并预览失败: ${err.message}`)
+        this.$message.warning(`保存并预览失败: ${err.message}`)
       }).finally(() => {
         this.previewLoading = false
       })
@@ -75,14 +75,14 @@ export default {
       this.onlineLoading = true
       let data = {online: 1}
       this.savePage(data).then(() => {
-        this.$message.success('上架成功')
+        this.$message.success('已保存')
       }).catch((err) => {
         this.$message.warning(`上架失败: ${err.message}`)
       }).finally(() => {
         this.onlineLoading = false
       })
     },
-    // 返回频道列表页面
+    // 返回页面
     backToList() {
       try {
         let isParentActivityPage = window.opener && window.opener.location.hash === '#/activity'
@@ -108,7 +108,7 @@ export default {
       })
     },
     setIdForAddSave(id) {
-      this.$router.push(`/decorate?id=${id}`)
+      if(String(this.$route.query.id)!==String(id))this.$router.replace(`/decorate?id=${id}`)
       let pageData = {...this.pageData}
       pageData.id = id
       this.$store.commit('UPDATE_COMPONENT', {data: pageData})

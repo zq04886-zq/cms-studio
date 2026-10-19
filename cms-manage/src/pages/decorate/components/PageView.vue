@@ -52,9 +52,9 @@ export default {
     // 左侧组件拖动到页面预览区域事件
     onDragover(event) {
       event.preventDefault() // 设置当前区域可以被进入
-      const viewWrapTop = 191 // 页面预览区域距离顶部top
+      const viewWrapTop = this.$el.querySelector('.preview-wrap').getBoundingClientRect().top + window.scrollY // 页面预览区域距离顶部top
       // 拖动距离预览区top距离
-      let dropTop = this.$refs.pageView.scrollTop + event.pageY - viewWrapTop
+      let dropTop = event.pageY - viewWrapTop
       console.log(dropTop, 'dropTop')
       // 获取当前拖动组件要添加位置的索引
       let addIndex = 0

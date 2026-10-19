@@ -65,6 +65,9 @@ const store = new Vuex.Store({
   getters,
   mutations: {
     SET_INIT_PAGE_DATA(state) {
+      state.setType = 1
+      state.activeComponentId = null
+      state.previewHeight = ''
       state.pageData = JSON.parse(JSON.stringify(emptyPageData))
     },
     // 修改当前设置内容（页面 or 组件）

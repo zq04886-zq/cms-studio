@@ -22,6 +22,7 @@
       style="width: 100%"
       @selection-change="handleSelectionChange"
     >
+      <el-table-column v-if="selectType === 'single'" label="选择" width="70"><template slot-scope="scope"><el-radio v-model="checkedId" :label="scope.row.id"><span /></el-radio></template></el-table-column>
       <el-table-column v-if="selectType === 'multi'" type="selection" width="55" />
       <el-table-column label="商品编码" prop="jvCode" />
       <el-table-column label="商品名称" prop="jvName">
@@ -112,6 +113,8 @@ export default {
     // 模态框显示时获取列表数据
     dialogVisible(newVal, oldVal) {
       if (newVal) {
+        this.checkedId = ''
+        this.multipleSelection = []
         this.list = []
         this.nowPage = 1
         this.getList()
@@ -142,7 +145,7 @@ export default {
         this.loading = false
         this.list = res.list
         this.total = res.total
-      })
+      }).finally(() => {this.loading=false})
     },
     // 表格复选框选中事件变化
     handleSelectionChange(val) {

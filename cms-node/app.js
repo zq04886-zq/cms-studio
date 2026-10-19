@@ -1,49 +1,33 @@
-const createError = require('http-errors');
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
-
-
-const app = express();
-const config = require('./config')
-const logs = require('./utils/logger')
-const routes= require('./routes')
-const login = require('./utils/login')
-
-const { input, logger } = config.common.extend
-const { controller, service } = require('./extend')
-
-app.use(controller(app))
-app.use(service(app))
-app.use(input())
-
-// view engine setup
-app.set('views', path.join(__dirname, 'ejs'));
-app.set('view engine', 'ejs');
-
-
-app.use(logger())
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-
-app.use('/cms/swagger',express.static(path.join(__dirname, 'public')));
-console.log(login, 'login')
-app.use(cors());
-app.use(login())
-app.use(routes(app, config))
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
-
-// error handler
-app.use(function(err, req, res, next) {
-  logs.error(err)
-  res.status(err.status || 500);
-  next()
-});
-
-module.exports = app;
+const express=require('express'),path=require('path'),fs=require('fs')
+const config=require('./config'),model=require('./models')
+const {controller,service}=require('./extend')
+const app=express()
+app.disable('x-powered-by')
+app.use((req,res,next)=>{res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','same-origin');next()})
+app.use(express.json({limit:'2mb'}))
+app.use(express.urlencoded({extended:false,limit:'2mb'}))
+app.use(controller(app));app.use(service(app));app.use(config.common.extend.input())
+fs.mkdirSync(config.uploadDir,{recursive:true})
+app.use('/uploads',express.static(config.uploadDir,{dotfiles:'deny',setHeaders:res=>{res.setHeader('Content-Security-Policy',"default-src 'none'")}}))
+app.get('/health',async(req,res)=>{try{await model.sequelize.authenticate();res.json({status:'ok'})}catch(e){res.status(503).json({status:'unavailable'})}})
+// Do not trust arbitrary forwarded client addresses; account-based limiter also works behind a proxy.
+const attempts=new Map()
+app.post('/atlas-cms/login',(req,res,next)=>{
+ const key=String(req.body.username||'').toLowerCase(),now=Date.now()
+ for(const [k,v]of attempts)if(v.until<now)attempts.delete(k)
+ const entry=attempts.get(key)||{count:0,until:now+60000};entry.count++;attempts.set(key,entry)
+ if(entry.count>20||attempts.size>10000)return res.status(429).json({code:-1,message:'尝试过于频繁，请稍后重试'})
+ next()
+})
+app.use('/atlas-cms',require('./utils/login')(),require('./routes/cms')(app,config))
+app.use('/cms-manage',express.static(path.join(__dirname,'../cms-manage/dist')))
+app.use('/crs',express.static(path.join(__dirname,'../crs/dist')))
+app.get('/',(req,res)=>res.redirect('/cms-manage/'))
+app.use((req,res)=>res.status(404).json({code:-1,message:'资源不存在'}))
+app.use((err,req,res,next)=>{
+ console.error(err.message)
+ if(res.headersSent)return next(err)
+ const status=err.status||err.httpCode||500
+ res.status(status).json({code:-1,message:status<500?err.message:'服务异常，请稍后重试'})
+})
+module.exports=app

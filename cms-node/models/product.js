@@ -1,0 +1,1 @@
+module.exports = (sequelize, D) => sequelize.define('product', {id: {type:D.INTEGER,primaryKey:true,autoIncrement:true}, jvCode:{type:D.STRING(100),unique:true}, jvName:D.STRING(200), brand:D.STRING(100), imgUrl:D.STRING(1024), listPrice:D.DECIMAL(10,2)}, {freezeTableName:true,timestamps:false})

@@ -106,8 +106,11 @@ export default {
     }
   },
   watch: {
-    property (value) {
-      const skuIdList = value.productList.map(v => {
+    property: {
+      immediate:true,
+      deep:true,
+      handler(value) {
+      const skuIdList = (value.productList || []).map(v => {
         return v.id
       })
       if (skuIdList.length) {
@@ -123,10 +126,11 @@ export default {
       } else {
         this.productList = PRODUCTDEFAULT
       }
+      }
     }
   },
   mounted () {
-    if (this.property.productList.length) {
+    if ((this.property.productList || []).length) {
 
     }
   }

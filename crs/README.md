@@ -1,50 +1,5 @@
-###### cms管理系统传给h5的数据格式
+# crs
 
-**pageChange事件**
+移动端页面渲染器，读取页面配置并渲染组件。
 
-```
-{
-  id: '',
-  name: '页面标题',
-  desc: '',
-  backgroundColor: '',
-  backgroundImage: '',
-  backgroundPosition: 'top',
-  cover: '',
-  componentList: []
-}
-```
-
-**setPreview事件**
-index
-
-**setActive事件**
-index
-
-###### h5传给cms的数据格式
-
-**setActive**
-index
-
-**pageChange**
-
-```
-{
-  id: '',
-  name: '页面标题',
-  desc: '',
-  backgroundColor: '',
-  backgroundImage: '',
-  backgroundPosition: 'top',
-  cover: '',
-  componentList: []
-}
-```
-
-**pageHeightChange**
-```
-{
-  height: '',
-  componentsTopList: []
-}
-```
+安装、构建和启动请查看根目录的 [运行说明](../运行说明.md)，结构说明见 [代码分析](../源码分析.md)。
