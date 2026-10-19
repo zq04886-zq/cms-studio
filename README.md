@@ -1,24 +1,23 @@
 # CMS Studio
 
-移动端活动页配置系统，采用 X / Grok 启发的黑白灰视觉。仅修改模板与样式，原有 Vue script 块和 JavaScript 逻辑保持不变。
+课程 CMS 的 X/Grok 风格迁移版。保留 Vue 2 管理端、Vue 2 移动端渲染器，以及 Express 4 + Sequelize 5 + MySQL 后端。
 
-## 目录
-- cms-manage：Vue 2 管理端，活动管理、拖拽组件、属性配置与预览入口。
-- crs：Vue 2 / Vant H5 渲染端。
-- cms-node：原有 Express / Sequelize 服务端。
+业务源码以课程解压文件为基准；唯一运行时代码差别是管理端 App.vue 加载独立 CSS。没有新增或替换业务逻辑。
 
-## 启动与构建
-使用 Node 16。管理端执行 `npm ci --legacy-peer-deps`；H5 原锁文件缺少条目，执行 `npm install --legacy-peer-deps --package-lock=false`。
-分别执行 `npm start` 启动，执行 `npm run build` 构建。
-管理端 http://127.0.0.1:3011/cms-manage/ ，渲染端 http://127.0.0.1:3010/crs/ 。
+- 管理端：`cms-manage`，开发端口 3011，路径 `/cms-manage/`
+- 移动端：`crs`，开发端口 3010，路径 `/crs/`
+- 后端：`cms-node`，启动时设置 `PORT=3300`，接口前缀 `/atlas-cms`
+- 源码一致性校验：在根目录运行 `node scripts/verify-source.cjs`
+- 详细说明：[源码分析](./源码分析.md)
 
-## 后端部署
-管理端代理指向本机 3300。登录、保存、上传、上架依赖后端及数据库，静态前端不能单独提供这些功能。
-课程源码带有第三方数据库、FTP 配置与 SQL 数据，这些文件仅留在本地，不提交 GitHub。部署时需提供自行管理的数据库和配置，不能直接使用课程内置第三方服务。
-GitHub 发布用于源码交付，不代表已完成公网后端部署。
+## 安装与运行
 
-## 验证记录
-- 管理端生产构建通过；存在课程原始代码的三个 API 导出缺失警告：fetchPictureGroup、fetchPictureList、fetchProduct。因此图片库及商品查询不能视为已可用。
-- H5 端本地使用 `npm install --no-save --package-lock=false --legacy-peer-deps less@4.1.1 vue@2.6.14` 后构建通过，避免最新 Less 与旧 Webpack 不兼容；原始源码与依赖清单不变。
-- 对比原始 169 个 JavaScript / Vue 文件，JavaScript 文件与 Vue script 块均未修改。
-- 无头浏览器检查登录、首页和编辑器，登录空值校验通过，无页面 JavaScript 异常。未连接第三方课程后端，未验证真实登录、保存和上传。
+分别进入三个子项目执行 `npm install --legacy-peer-deps`。旧版 Vue CLI / Webpack 4 在新版 Node 上构建需要 `NODE_OPTIONS=--openssl-legacy-provider`。两个前端执行 `npm run build` 或查看各自 package.json 中的开发命令。
+
+后端保持原配置读取方式，并不读取 .env。将 `deployment-examples` 的配置样例复制到对应的 `cms-node/config/config.env.dev.js`、`config.env.prod.js`、`cms-node/utils/ftp.js`，填写自己的服务配置。SQL 样例只含结构，不包含课程账号和数据。初始化自己的 MySQL 后，PowerShell 中设置 `$env:PORT='3300'`，运行 `node index.js`。原项目使用 `NODE_ENV=prod` 选择生产配置。
+
+## 发布边界
+
+GitHub 仓库发布不等于完整业务公网部署。当前保持原源码中的 localhost 地址、预览参数拼接及三个缺失的 API 导出。需要部署 MySQL、FTP 及后端服务，确认真实访问地址，并另行确定必要的配置/逻辑修复范围，才能进行完整业务验收。不要把构建通过当作登录、上传、保存和发布流程已经通过。
+
+原项目真实配置、FTP 凭据、SQL 数据、依赖目录及构建产物均不提交。样例只用于部署准备，不参与运行。

@@ -35,14 +35,12 @@ html body{background:#000;color:var(--ink);font-family:"Segoe UI","Microsoft YaH
 .el-dialog,.el-message-box,.el-select-dropdown,.el-picker-panel{background:#151515;color:#ddd;border:1px solid #41464b;border-radius:14px}
 .el-dialog__title,.el-dialog__body,.el-message-box__title,.el-message-box__content{color:#ddd}.el-dialog__header{border-color:#333}.el-select-dropdown__item{color:#ccc}.el-select-dropdown__item.hover,.el-select-dropdown__item:hover{background:#303030}.el-select-dropdown__item.selected{color:#fff}
 .studio-panel-heading{padding:24px 16px 18px}.studio-panel-heading h2{font-size:18px;font-weight:650}.studio-panel-heading p{color:#92989d;font-size:11px;margin-top:5px}.studio-mini-mark{font-size:26px;margin-right:12px}
-#app .studio-home{max-width:1120px;margin:0 auto;padding:28px 48px 20px}.studio-welcome{display:flex;align-items:center;gap:12px;font-size:16px}.studio-mark{font-size:36px;color:white}.studio-user{margin-left:auto;color:#92989d;font-size:12px}.studio-hero{padding:68px 0 58px}.studio-kicker{font-size:16px;color:#92989d;margin-bottom:22px}.studio-hero h1{font-size:clamp(48px,6vw,82px);font-weight:650;letter-spacing:-3px;line-height:1.12}.studio-description{font-size:15px;line-height:1.9;color:#92989d;margin:26px 0 30px}.studio-cta{display:inline-flex;gap:45px;align-items:center;background:#eff3f4;color:#0f1419!important;border-radius:28px;padding:14px 24px;font-size:14px;font-weight:650}.studio-cta:hover{background:#d7dbdc}.studio-secondary{margin-left:24px;color:#d6dbdf!important}.studio-features{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid #2f3336;border-bottom:1px solid #2f3336}.studio-features article{padding:28px 24px 28px 0}.studio-features i{font-size:26px;color:#ddd}.studio-features h2{font-size:16px;font-weight:600;margin:16px 0 9px}.studio-features p{color:#92989d;line-height:1.8;max-width:240px}.studio-footer{padding-top:22px;color:#71767b}.studio-footer span{float:right}
 #app .login-container{background:#000;min-width:0;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:32px 20px;box-sizing:border-box}
 #app .login-container .login-form{position:static;transform:none;margin:0;padding:40px 0;width:360px;max-width:100%;background:transparent}
 #app .login-container .title{font-size:38px;color:#f1f3f5;text-align:left;font-weight:650;margin:16px 0 10px;letter-spacing:-1px}
 #app .login-container .login-symbol{font-size:64px;line-height:1;color:#fff}.login-caption{color:#92989d;margin-bottom:36px;font-size:14px}
 #app .login-container .el-input__inner{height:52px;background:#080808;border-radius:10px}#app .login-container .el-button{height:48px;margin-top:10px}
 #app a:focus-visible,#app button:focus-visible{outline:2px solid #fff;outline-offset:4px}
-@media(max-width:1100px){#app .studio-home{padding:28px}.studio-hero{padding-top:40px}.studio-hero h1{font-size:58px}}
 @media(prefers-reduced-motion:reduce){#app *,#app *::before,#app *::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 #app .component-title{color:#e7e9ea;border-color:#2f3336}
 #app .com-group .title,#app .com-group-title,#app .com-title{color:#a7adb2}
@@ -56,3 +54,17 @@ html body{background:#000;color:var(--ink);font-family:"Segoe UI","Microsoft YaH
 #app .preview-iframe{display:block;background:#fff}
 #app .component-list li{min-height:66px;padding-top:10px;box-sizing:border-box}
 #app .com-group .com-group-header .com-name,#app .com-group .com-group-header .com-name.com-name-black,#app .com-group .com-group-header .com-value{color:#a7adb2}
+
+/* Presentation only: original homepage DOM, bindings and navigation are preserved. */
+#app .view .card{width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;border-radius:0}
+#app .view .card .avatar{filter:grayscale(1);border-radius:50%;width:48px;height:48px}
+#app .view .content{position:static;transform:none;max-width:1000px;margin:90px auto;padding:0 48px;display:block}
+#app .view .content>img{display:none}
+#app .view .content-desc{margin:0}
+#app .view .content-desc .sub-title{color:#92989d;font-size:18px;margin-bottom:24px}
+#app .view .content-desc .title{color:#f1f3f5;font-size:clamp(40px,5vw,72px);line-height:1.25;letter-spacing:-2px;width:100%;max-width:760px;font-weight:650}
+#app .view .content-desc .desc{color:#92989d;line-height:1.9;margin-top:32px;padding-top:24px;border-top:1px solid var(--line)}
+#app .login-container .title-container:before{content:'✳';display:block;font-size:64px;color:#fff;line-height:1.2;margin-bottom:28px}
+#app .login-container .title{font-size:30px;line-height:1.4;margin-bottom:28px}
+@media(max-width:800px){#app .view .content{margin:50px auto;padding:0 24px}}
+#app .view .content-desc .title{font-size:clamp(36px,4vw,58px);max-width:900px;text-wrap:balance} #app .page-head .logo,#app .sidebar-container .logo{filter:grayscale(1)}

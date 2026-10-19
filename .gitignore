@@ -5,6 +5,9 @@
 .env
 .env.*
 cms-node/config/config.env.*.js
-cms-node/config/config.js
 cms-node/utils/ftp.js
 cms-node/cms.sql
+
+**/data/
+**/.env
+!**/.env.example

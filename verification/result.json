@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-19",
+  "sourceFiles": 267,
+  "jsFiles": 86,
+  "vueFiles": 83,
+  "backendSyntaxChecked": 32,
+  "sourceComparison": {
+    "checked": 267,
+    "localConfigurationAbsent": 0,
+    "failures": []
+  },
+  "manageBuild": "passed with 3 missing-export warnings and 2 size warnings",
+  "crsBuild": "passed with 2 size warnings",
+  "browser": "login required validation passed; login/home/decorate no page errors",
+  "businessEndToEnd": "not run: own MySQL/FTP/backend deployment not configured"
+}

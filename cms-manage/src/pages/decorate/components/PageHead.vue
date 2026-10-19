@@ -1,8 +1,8 @@
 <template>
   <div class="page-head">
     <a class="go-back" @click="backToList">
-      <span class="studio-mini-mark">／</span>
-      返回活动管理
+      <img class="logo" src="~@/assets/img/layout/logo.png">
+      返回频道列表页面
     </a>
     <div class="page-operate">
       <el-button type="primary" size="medium" :loading="saveLoading"
@@ -11,7 +11,7 @@
         保存
       </el-button>
       <el-button size="medium" :loading="previewLoading" @click="saveAndView">
-        上架并预览
+        预览
       </el-button>
     </div>
   </div>

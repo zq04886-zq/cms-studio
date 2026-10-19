@@ -1,6 +1,6 @@
 <template>
   <div class="page-left">
-    <div class="studio-panel-heading"><h2>组件库</h2><p>拖入画布，开始创作</p></div>
+    <!-- 页面可选组件列表 -->
     <el-collapse v-model="activeNames">
       <el-collapse-item
         v-for="(item,index) in componentlist"

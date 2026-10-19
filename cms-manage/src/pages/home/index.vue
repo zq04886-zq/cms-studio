@@ -1,10 +1,30 @@
 <template>
-<main class="studio-home">
- <header class="studio-welcome"><span class="studio-mark">／</span><span>CMS Studio</span><span class="studio-user">{{ username }} · 管理员</span></header>
- <section class="studio-hero"><p class="studio-kicker">从一个想法，到一个页面。</p><h1>让内容<br>自由成形。</h1><p class="studio-description">拖入组件，调整内容，即时预览。<br>在同一工作台里，完成移动端活动页面的搭建。</p><router-link class="studio-cta" to="/activity">进入活动管理 <span>↗</span></router-link><router-link class="studio-secondary" to="/decorate">创建新页面</router-link></section>
- <section class="studio-features"><article><i class="el-icon-rank"/><h2>拖拽编排</h2><p>组合图片、轮播与商品组件，搭建页面结构。</p></article><article><i class="el-icon-edit-outline"/><h2>精细配置</h2><p>集中调整内容、跳转链接和组件展示属性。</p></article><article><i class="el-icon-mobile-phone"/><h2>移动端预览</h2><p>查看 H5 渲染效果，再保存页面配置。</p></article></section>
- <footer class="studio-footer">CMS Studio <span>内容，由你定义。</span></footer>
-</main></template>
+  <div class="view">
+    <el-card class="card">
+      <div class="flex">
+        <img class="avatar" src="../../assets/default-avatar.gif" alt="">
+        <div>
+          <h2>{{username}}</h2>
+          <p style="margin-top: 5px;">管理员</p>
+        </div>
+      </div>
+    </el-card>
+    <div class="content flex">
+      <div class="content-desc">
+        <div class="sub-title">
+          欢迎体验
+        </div>
+        <div class="title">
+          CMS移动端页面配置系统
+        </div>
+        <div class="desc">
+          一套用于解决小程序活动页面发版问题的低代码平台
+        </div>
+      </div>
+      <img src="../../assets/welcome.png" alt="">
+    </div>
+  </div>
+</template>
 
 <script>
 // import { mapGetters } from 'vuex'
