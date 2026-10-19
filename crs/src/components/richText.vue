@@ -61,7 +61,7 @@ export default {
   line-height: 1.5;
   text-align: left;
   word-wrap: break-word;
-  /deep/ img{
+  :deep(img) {
     max-width: 100%;
     vertical-align: top;
     height: auto!important;

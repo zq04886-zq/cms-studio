@@ -39,8 +39,10 @@
 </template>
 
 <script>
-import componentlist from '@/config/component-list'
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { useEditorStore } from '@/store/index.js'
+
+import componentlist from '@/config/component-list.js'
+import { mapState, mapActions } from 'pinia'
 
 export default {
   name: 'PageLeft',
@@ -52,16 +54,16 @@ export default {
   },
   computed: {
     componentMap() { // 预览页面组件数量
-      return this.$store.getters.pageComponentTotalMap
+      return useEditorStore().pageComponentTotalMap
     },
     // 从公共数据源中获取可选组件列表
-    ...mapState(['dragComponent', 'addComponentIndex'])
+    ...mapState(useEditorStore, ['dragComponent', 'addComponentIndex'])
   },
   methods: {
-    ...mapMutations(['SET_DRAG_STATE', 'SET_DRAG_COMPONENT', 'SET_DRAG_INDEX', 'VIEW_SET_ACTIVE']),
-    ...mapActions(['pageChange']),
+    ...mapActions(useEditorStore, ['SET_DRAG_STATE', 'SET_DRAG_COMPONENT', 'SET_DRAG_INDEX', 'VIEW_SET_ACTIVE']),
+    ...mapActions(useEditorStore, ['pageChange']),
     addComponent(component) {
-      if(this.draggableEnable(component))this.pageChange({type:'add',index:this.$store.state.pageData.componentList.length,data:component})
+      if(this.draggableEnable(component))this.pageChange({type:'add',index:useEditorStore().pageData.componentList.length,data:component})
     },
     // 开始拖动组件
     onDragstart(component, event) {
@@ -158,15 +160,15 @@ export default {
 // 折叠面板样式
 .el-collapse {
   border: none;
-  /deep/ .el-collapse-item__header {
+  :deep(.el-collapse-item__header) {
     border: none;
     height: 30px;
     line-height: 30px;
   }
-  /deep/ .el-collapse-item__wrap {
+  :deep(.el-collapse-item__wrap) {
     border: none;
   }
-  /deep/ .el-collapse-item__content {
+  :deep(.el-collapse-item__content) {
     padding-bottom: 0;
   }
 }

@@ -8,20 +8,22 @@
 
     <!-- 组件的公共配置内容 -->
     <!-- 上传图片组件 -->
-    <UpLoadImg :dialog-image-visible.sync="dialogImageVisible" @upLoadImgSuccess="upLoadImgSuccess" />
+    <UpLoadImg v-model:dialog-image-visible="dialogImageVisible" @upLoadImgSuccess="upLoadImgSuccess" />
   </div>
 </template>
 <script>
+import { useEditorStore } from '@/store/index.js'
+
 // 结构组件
-import PageHead from './components/PageHead'
-import PageLeft from './components/PageLeft'
-import PageView from './components/PageView'
-import PageRight from './components/PageRight'
-import { createRandomId } from '@/utils'
+import PageHead from './components/PageHead.vue'
+import PageLeft from './components/PageLeft.vue'
+import PageView from './components/PageView.vue'
+import PageRight from './components/PageRight.vue'
+import { createRandomId } from '@/utils/index.js'
 // 公共配置组件
-import UpLoadImg from '@/components/BasicConfig/UpLoadImg'
+import UpLoadImg from '@/components/BasicConfig/UpLoadImg.vue'
 // 获取页面数据
-import { getCmsPageById } from '@/api/activity'
+import { getCmsPageById } from '@/api/activity/index.js'
 export default {
   name: 'App',
   components: {
@@ -40,10 +42,10 @@ export default {
     // 上传图片模态框是否显示
     dialogImageVisible: {
       get: function() {
-        return this.$store.state.dialogImageVisible
+        return useEditorStore().dialogImageVisible
       },
       set: function(val) {
-        this.$store.commit('SET_UPIMAGE_VISIBLE', val)
+        useEditorStore().SET_UPIMAGE_VISIBLE(val)
       }
     }
   },
@@ -74,13 +76,13 @@ export default {
             item.id = item.data.component + '-' + id
           }
         })
-        this.$store.commit('UPDATE_COMPONENT', {data})
-        this.$store.commit('VIEW_UPDATE')
+        useEditorStore().UPDATE_COMPONENT({data})
+        useEditorStore().VIEW_UPDATE()
       }
     },
     // 上传图片成功回调事件
     upLoadImgSuccess(imgUrl) {
-      let fuc = this.$store.state.upLoadImgSuccess
+      let fuc = useEditorStore().upLoadImgSuccess
       if (fuc) fuc(imgUrl)
     }
   }

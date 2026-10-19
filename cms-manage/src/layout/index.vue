@@ -18,9 +18,11 @@
 </template>
 
 <script>
-import { AppMain, Navbar, Sidebar } from '@/components'
-import ResizeMixin from '@/mixins/ResizeHandler'
-// import { mapState } from 'vuex'
+import { useEditorStore } from '@/store/index.js'
+
+import { AppMain, Navbar, Sidebar } from '@/components/index.js'
+import ResizeMixin from '@/mixins/ResizeHandler.js'
+// import { mapState } from 'pinia'
 
 export default {
   name: 'Vuex',
@@ -58,7 +60,7 @@ export default {
     }
   },
   computed: {
-    // ...mapState({
+    // ...mapState(useEditorStore, {
     //   sidebar: state => state.app.sidebar,
     //   device: state => state.app.device,
     //   showSettings: false,

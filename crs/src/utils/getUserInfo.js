@@ -1,4 +1,4 @@
-var wx = require('weixin-js-sdk')
+import wx from 'weixin-js-sdk'
 // import Sensors from "@/sensors";
 
 const ISLOGIN_KEY = "isLogin";

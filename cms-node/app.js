@@ -9,7 +9,7 @@ app.use(express.urlencoded({extended:false,limit:'2mb'}))
 app.use(controller(app));app.use(service(app));app.use(config.common.extend.input())
 fs.mkdirSync(config.uploadDir,{recursive:true})
 app.use('/uploads',express.static(config.uploadDir,{dotfiles:'deny',setHeaders:res=>{res.setHeader('Content-Security-Policy',"default-src 'none'")}}))
-app.get('/health',async(req,res)=>{try{await model.sequelize.authenticate();res.json({status:'ok'})}catch(e){res.status(503).json({status:'unavailable'})}})
+app.get('/health',async(req,res)=>{try{await model.$queryRaw`SELECT 1`;res.json({status:'ok'})}catch(e){res.status(503).json({status:'unavailable'})}})
 // Do not trust arbitrary forwarded client addresses; account-based limiter also works behind a proxy.
 const attempts=new Map()
 app.post('/atlas-cms/login',(req,res,next)=>{

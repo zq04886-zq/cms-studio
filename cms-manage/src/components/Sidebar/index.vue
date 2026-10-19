@@ -7,5 +7,7 @@
  </aside>
 </template>
 <script>
-export default {name:'Sidebar',data:()=>({username:localStorage.getItem('username')}),methods:{createPage(){this.$store.commit('SET_INIT_PAGE_DATA');this.$router.push('/decorate')}}}
+import { useEditorStore } from '@/store/index.js'
+
+export default {name:'Sidebar',data:()=>({username:localStorage.getItem('username')}),methods:{createPage(){useEditorStore().SET_INIT_PAGE_DATA();this.$router.push('/decorate')}}}
 </script>

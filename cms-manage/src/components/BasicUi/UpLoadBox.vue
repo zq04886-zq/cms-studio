@@ -38,15 +38,17 @@
       <el-button size="small" type="primary" :loading="uploading">
         +&nbsp;上传图片
       </el-button>
-      <div slot="tip" class="el-upload__tip">
+      <template #tip><div class="el-upload__tip">
         只能上传jpg/png文件，且不超过2MB
-      </div>
+      </div></template>
     </el-upload>
   </div>
 </template>
 
 <script>
-import { upLoadUrl } from '@/api/index'
+import { useEditorStore } from '@/store/index.js'
+
+import { upLoadUrl } from '@/api/index.js'
 export default {
   name: 'UploadBox',
   props: {
@@ -85,8 +87,8 @@ export default {
   },
   methods: {
     selectLibrary() {
-      this.$store.commit('SET_UPIMAGE_FUC', url => this.$emit('update:imgUrl',url))
-      this.$store.commit('SET_UPIMAGE_VISIBLE',true)
+      useEditorStore().SET_UPIMAGE_FUC(url => this.$emit('update:imgUrl',url))
+      useEditorStore().SET_UPIMAGE_VISIBLE(true)
     },
     editImg() {
       console.log(this.uploadFile, 111)

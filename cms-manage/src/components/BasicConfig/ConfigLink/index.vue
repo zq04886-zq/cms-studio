@@ -14,14 +14,14 @@
       :close-on-click-modal="false"
       class="cl-dialog-layout"
       custom-class="config-link-dialog"
-      :visible.sync="dialogVisible"
+      v-model:model-value="dialogVisible"
       width="710px"
       @closed="onclose"
       @open="onDialogOpen"
     >
       <el-tabs v-if="tabVisible" v-model="activeName" @tab-click="onTabClick">
-        <template v-for="item in tabConfig">
-          <el-tab-pane :key="item.clickType" :label="item.label" :name="item.clickType.toString()">
+        <template v-for="item in tabConfig" :key="item.clickType">
+          <el-tab-pane :label="item.label" :name="item.clickType.toString()">
             <!-- visible: tab隐藏时，清空验证数据， init: tab组件点击时才初始化 -->
             <component :is="item.component" v-if="item.init" :visible="item.clickType.toString() === activeName"
                        :columns="item.columns"
@@ -35,28 +35,26 @@
           </el-tab-pane>
         </template>
       </el-tabs>
-      <span slot="footer" class="dialog-footer">
+      <template #footer><span class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
         <el-button size="small" type="primary" @click="onConfirm">确 定</el-button>
-      </span>
+      </span></template>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import ComTable from './component/ComTable'
-import OrderTable from './component/OrderTable'
-import ProjectSelect from './component/ProjectSelect'
-import OuterUrl from './component/OuterUrl'
-import InnerUrl from './component/InnerUrl'
-import tabConfig from './tabConfig'
+import ComTable from './component/ComTable.vue'
+import OuterUrl from './component/OuterUrl.vue'
+import InnerUrl from './component/InnerUrl.vue'
+import tabConfig from './tabConfig.js'
 let copyData = [...tabConfig]
 let defItem = copyData[0]
 defItem.init = true
 let emptyData = {clickType: defItem.clickType, data: null}
 export default {
   name: 'ConfigLink',
-  components: {ComTable, OrderTable, ProjectSelect, OuterUrl, InnerUrl},
+  components: {ComTable, OuterUrl, InnerUrl},
   props: {
     value: Boolean,
     linkObj: {
@@ -188,7 +186,7 @@ export default {
       vertical-align: middle;
     }
   }
-  /deep/.config-link-dialog{
+  :deep(.config-link-dialog) {
     margin-top: 0px !important;
     top: 50vh !important;
     transform: translateY(-50vh) !important;

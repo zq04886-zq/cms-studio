@@ -1,1 +1,0 @@
-module.exports = (sequelize, D) => sequelize.define('picture', {id: {type:D.INTEGER,primaryKey:true,autoIncrement:true}, name:D.STRING(255), url:D.STRING(1024), created_at:D.DATE}, {freezeTableName:true,timestamps:false})

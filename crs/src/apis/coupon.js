@@ -1,6 +1,6 @@
 
-import axios from '../utils/axios'
-var wx = require('weixin-js-sdk')
+import axios from '../utils/axios.js'
+import wx from 'weixin-js-sdk'
 
 // 获取券包详情
 export function findCouponActivityInfo(data) {

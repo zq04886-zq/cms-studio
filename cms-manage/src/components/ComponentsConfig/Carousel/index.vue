@@ -12,11 +12,11 @@
     <ComGroup title="添加图片" :tips="'最多添加'+ selectLimitSize +'个广告，鼠标拖拽调整广告顺序，建议宽度750像素'" :name-black="true" />
 
     <ComGroup :bg-gray="true" :content-block="true">
-      <!-- <PicList :piclist.sync="configData.piclist" input-place-holder="建议10个字以内，可不填" /> -->
+      <!-- <PicList v-model:piclist="configData.piclist" input-place-holder="建议10个字以内，可不填" /> -->
       <PicList
         :key="activeIndex"
         :limit-size="selectLimitSize"
-        :image-list.sync="configData.imageList"
+        v-model:image-list="configData.imageList"
         :show-name="false"
         :show-add="true"
         input-place-holder="建议10个字以内，可不填"
@@ -41,7 +41,7 @@
         :max="30"
         show-input
         :show-input-controls="false"
-        input-size="mini"
+        input-size="small"
       />
     </ComGroup>
     <ComGroup v-show="!!configData.isDefaultMargin" title="图片左右边距">
@@ -50,7 +50,7 @@
         :max="30"
         show-input
         :show-input-controls="false"
-        input-size="mini"
+        input-size="small"
       />
     </ComGroup>
     <ComGroup v-show="!!configData.isDefaultMargin && configData.layout === 'single'" title="图片边距">
@@ -59,7 +59,7 @@
         :max="30"
         show-input
         :show-input-controls="false"
-        input-size="mini"
+        input-size="small"
       />
     </ComGroup>
     <ComGroup title="是否设置圆角">
@@ -79,7 +79,7 @@
         :max="30"
         show-input
         :show-input-controls="false"
-        input-size="mini"
+        input-size="small"
       />
     </ComGroup>
     <!-- <ComGroup v-show="configData.layout !== 'swiper' " title="图片间距">
@@ -88,7 +88,7 @@
         :max="30"
         show-input
         :show-input-controls="false"
-        input-size="mini"
+        input-size="small"
       />
     </ComGroup> -->
     <ComGroup title="背景颜色">
@@ -101,12 +101,12 @@
 </template>
 
 <script>
-import ComGroup from '@/components/BasicUi/ComGroup'
-import ComRadioGroup from '@/components/BasicUi/ComRadioGroup'
-import ComDivider from '@/components/BasicUi/ComDivider'
-import PicList from '@/components/BasicConfig/PicList'
-// import { radiusList } from '@/config/com-radio-group'
-import { debounce } from '@/utils'
+import ComGroup from '@/components/BasicUi/ComGroup.vue'
+import ComRadioGroup from '@/components/BasicUi/ComRadioGroup.vue'
+import ComDivider from '@/components/BasicUi/ComDivider.vue'
+import PicList from '@/components/BasicConfig/PicList.vue'
+// import { radiusList } from '@/config/com-radio-group.js'
+import { debounce } from '@/utils/index.js'
 
 export default {
   name: 'Carousel',

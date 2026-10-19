@@ -1,25 +1,17 @@
-import Vue from 'vue'
-import App from '@/App.vue'
-import store from '@/store'
-import router from '@/router'
-import VueRouter from 'vue-router'
-import '@/styles/app.less' // 后台装修搭建系统公共CSS
-import VueQuillEditor from 'vue-quill-editor'
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill/dist/quill.bubble.css'
-
-import PizzaUI from '@bigbighu/mobili-pizza'
-import CoffeeUI from '@bigbighu/mobili-coffee'
-
-Vue.config.productionTip = false
-Vue.use(VueRouter)
-Vue.use(VueQuillEditor)
-Vue.use(PizzaUI)
-Vue.use(CoffeeUI)
-new Vue({
-  el: '#app',
-  router,
-  store,
-  render: h => h(App)
-})
+import { createApp } from 'vue'
+import ElementPlus from 'element-plus'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
+import 'element-plus/dist/index.css'
+import 'element-plus/theme-chalk/dark/css-vars.css'
+import mitt from 'mitt'
+import App from './App.vue'
+import { createPinia } from 'pinia'
+import router from './router/index.js'
+import './styles/app.less'
+import './styles/icon.less'
+import './styles/legacy-icons.css'
+const app = createApp(App)
+document.documentElement.classList.add('dark')
+const events = mitt()
+app.config.globalProperties.eventBus = { $on: events.on, $off: events.off, $emit: events.emit }
+app.use(createPinia()).use(router).use(ElementPlus, { locale: zhCn }).mount('#app')

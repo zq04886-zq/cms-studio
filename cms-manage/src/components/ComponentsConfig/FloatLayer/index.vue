@@ -3,12 +3,12 @@
     <div>
       <ComGroup title="上传图片" :tips="`建议图片为130*130px，支持图片格式${imgTypes.join('/')},大小不超过1M`" :name-black="true" />
       <div class="fl-uploader-box">
-        <UpLoadBox :img-url.sync="configData.imageUrl" />
+        <UpLoadBox v-model:img-url="configData.imageUrl" />
       </div>
     </div>
     <ComGroup title="链接">
       <a>
-        <ConfigLinkDialog :link-obj.sync="configData.link" />
+        <ConfigLinkDialog v-model:link-obj="configData.link" />
       </a>
     </ComGroup>
     <ComGroup title="浮标宽度">
@@ -27,9 +27,11 @@
   </div>
 </template>
 <script>
-import ComGroup from '@/components/BasicUi/ComGroup'
-import ConfigLinkDialog from '@/components/BasicConfig/ConfigLink'
-import UpLoadBox from '../../BasicUi/UpLoadBox'
+import { useEditorStore } from '@/store/index.js'
+
+import ComGroup from '@/components/BasicUi/ComGroup.vue'
+import ConfigLinkDialog from '@/components/BasicConfig/ConfigLink/index.vue'
+import UpLoadBox from '../../BasicUi/UpLoadBox.vue'
 export default {
   name: 'FloatLayer',
   components: {ComGroup, ConfigLinkDialog, UpLoadBox},
@@ -62,8 +64,8 @@ export default {
     },
     // 图片上传
     showDialogImage() {
-      this.$store.commit('SET_UPIMAGE_VISIBLE', true)
-      this.$store.commit('SET_UPIMAGE_FUC', this.upLoadImgSuccess)
+      useEditorStore().SET_UPIMAGE_VISIBLE(true)
+      useEditorStore().SET_UPIMAGE_FUC(this.upLoadImgSuccess)
     },
     // 图片上传成功
     upLoadImgSuccess(imgUrl) {

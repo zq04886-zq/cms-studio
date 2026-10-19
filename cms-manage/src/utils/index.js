@@ -8,12 +8,8 @@ export const isEmpty = val => {
  */
 export function dynamicComponents() {
   let components = {}
-  const dycomponent = require.context('@/components/ComponentsConfig', true, /\.vue$/)
-  dycomponent.keys().map(item => {
-    // 动态注册组件对应的配置文件
-    const name = item.split('/')[1]
-    components[name] = dycomponent(item).default
-  })
+  const files = import.meta.glob('../components/ComponentsConfig/*/index.vue', { eager: true, import: 'default' })
+  Object.entries(files).forEach(([file, component]) => { components[file.split('/').at(-2)] = component })
   return components
 }
 
@@ -56,7 +52,7 @@ export class Messager {
     if (!frame || !frame.contentWindow) return this
     var win = frame.contentWindow
     win.postMessage({
-      type, value
+      type, value: JSON.parse(JSON.stringify(value))
     }, this.targetOrigin)
     return this
   }

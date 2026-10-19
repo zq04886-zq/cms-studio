@@ -1,9 +1,12 @@
-<template functional>
-  <div class="up-pic-add" v-on="listeners">
+<template>
+  <div class="up-pic-add">
     <i class="el-icon-plus" />
-    {{ props.addText }}
+    {{ addText }}
   </div>
 </template>
+<script>
+export default { props: ['addText'] }
+</script>
 
 <style lang="less" scoped>
 // 添加内容按钮

@@ -2,7 +2,7 @@ export default {
   props: {
     clickType: Number
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.eventBus.$off(`setData_${this.clickType}`, this.setData)
   },
   mounted() {

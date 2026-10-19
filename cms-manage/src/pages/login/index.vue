@@ -25,7 +25,7 @@
           :type="passwordType"
           placeholder="密码"
           name="password"
-          @keyup.enter.native="handleLogin"
+          @keyup.enter="handleLogin"
         />
       </el-form-item>
       <el-button
@@ -39,7 +39,9 @@
 </template>
 
 <script>
-import { login } from '@/api/activity'
+import { useEditorStore } from '@/store/index.js'
+
+import { login } from '@/api/activity/index.js'
 export default {
   name: 'Login',
   data() {
@@ -99,7 +101,7 @@ export default {
           }).catch(() => {
             this.loading = false
           })
-          // this.$store.dispatch('user/login', this.loginForm)
+          // useEditorStore().user/login(this.loginForm)
           //   .then(() => {
           //     this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
           //     this.loading = false

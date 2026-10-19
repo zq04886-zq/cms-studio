@@ -21,29 +21,29 @@
 </template>
 
 <script>
-import Coupon from '@/components/Coupon'
-import CouponSingle from '@/components/CouponSingle'
-import { getH5PageJson } from '@/apis/preview'
-import UserInfo from '@/utils/getUserInfo'
-import vehicle from '@/utils/vehicle'
+import Coupon from '@/components/Coupon.vue'
+import CouponSingle from '@/components/CouponSingle.vue'
+import { getH5PageJson } from '@/apis/preview.js'
+import UserInfo from '@/utils/getUserInfo.js'
+import vehicle from '@/utils/vehicle.js'
 import VConsole from 'vconsole'
 
-import Carousel from '@/components/Carousel'
-import Dialog from '@/components/Dialog'
-import imgc from '@/components/imgc'
-import AssistLine from '@/components/AssistLine'
-import FloatLayer from '@/components/FloatLayer'
-import OnlineService from '@/components/OnlineService'
-import Slider from '@/components/Slider'
-import CubeSelection from '@/components/cubeSelection'
-import ImageNav from '@/components/image-nav'
-import product from '@/components/product'
-import Notice from '@/components/notice'
-import RichText from '@/components/richText'
-var wx = require('weixin-js-sdk')
+import Carousel from '@/components/Carousel.vue'
+import Dialog from '@/components/Dialog.vue'
+import imgc from '@/components/imgc.vue'
+import AssistLine from '@/components/AssistLine/index.vue'
+import FloatLayer from '@/components/FloatLayer/index.vue'
+import OnlineService from '@/components/OnlineService/index.vue'
+import Slider from '@/components/Slider.vue'
+import CubeSelection from '@/components/cubeSelection.vue'
+import ImageNav from '@/components/image-nav/index.js'
+import product from '@/components/product.vue'
+import Notice from '@/components/notice.vue'
+import RichText from '@/components/richText.vue'
+import wx from 'weixin-js-sdk'
 
 // 开发环境添加console插件
-if (process.env.NODE_ENV !== 'production') {
+if (import.meta.env.DEV) {
   const vConsole = new VConsole()
 }
 

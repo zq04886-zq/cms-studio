@@ -1,9 +1,9 @@
 import axios from 'axios'
-import UserInfo from '@/utils/getUserInfo'
-import { Toast } from 'vant';
+import UserInfo from '@/utils/getUserInfo.js'
+import { showToast as Toast } from 'vant';
 
 const instance = axios.create({
-  baseURL: process.env.NODE_ENV === 'production' ? window.location.origin + '/api' : '/api', // 接口地址
+  baseURL: import.meta.env.PROD ? window.location.origin + '/api' : '/api', // 接口地址
   timeout: 1000 * 15,
   headers: {'X-Custom-Header': 'foobar'}
 })

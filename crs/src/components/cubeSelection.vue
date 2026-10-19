@@ -149,7 +149,7 @@
   </div>
 </template>
 <script>
-import JumpLink from '@/mixin/jumpLink'
+import JumpLink from '@/mixin/jumpLink.js'
 import defaultImg from '../assets/block-img.png'
 
 export default {

@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { baseURL } from '@/config'
-import { Message } from 'element-ui'
+import { baseURL } from '@/config/index.js'
+import { ElMessage as Message } from 'element-plus'
 const service=axios.create({baseURL,timeout:20000})
 service.interceptors.request.use(config=>{const token=localStorage.getItem('token');if(token)config.headers['X-token']=token;return config})
 function failure(error){

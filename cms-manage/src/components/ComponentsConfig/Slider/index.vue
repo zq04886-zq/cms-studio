@@ -18,7 +18,7 @@
           :max="30"
           show-input
           :show-input-controls="false"
-          input-size="mini"
+          input-size="small"
         />
       </ComGroup>
       <ComGroup title="左右边距">
@@ -27,7 +27,7 @@
           :max="30"
           show-input
           :show-input-controls="false"
-          input-size="mini"
+          input-size="small"
         />
       </ComGroup>
       <ComGroup title="图片边距">
@@ -36,7 +36,7 @@
           :max="30"
           show-input
           :show-input-controls="false"
-          input-size="mini"
+          input-size="small"
         />
       </ComGroup>
     </div>
@@ -49,7 +49,7 @@
 
     <ComGroup :bg-gray="true" :content-block="true">
       <PicList
-        :image-list.sync="configData.imageList"
+        v-model:image-list="configData.imageList"
         add-place-holder="添加图片"
       />
     </ComGroup>
@@ -65,9 +65,9 @@
 </template>
 
 <script>
-import ComGroup from '@/components/BasicUi/ComGroup'
-import ComDivider from '@/components/BasicUi/ComDivider'
-import PicList from '@/components/BasicConfig/PicList'
+import ComGroup from '@/components/BasicUi/ComGroup.vue'
+import ComDivider from '@/components/BasicUi/ComDivider.vue'
+import PicList from '@/components/BasicConfig/PicList.vue'
 
 export default {
   name: 'Slider',

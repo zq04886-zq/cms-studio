@@ -5,7 +5,7 @@
     <el-form-item label="内部url地址" prop="redirectUrl">
       <el-input v-model.trim="formData.redirectUrl" class="form-item-width"
                 placeholder="请输入url地址"
-                size="mini"
+                size="small"
                 style="width: 350px"
                 @change="onDataChange"
       />
@@ -14,7 +14,7 @@
   </el-form>
 </template>
 <script>
-import mixins from './mixins'
+import mixins from './mixins.js'
 const emptyForm = {
   redirectUrl: null
 }

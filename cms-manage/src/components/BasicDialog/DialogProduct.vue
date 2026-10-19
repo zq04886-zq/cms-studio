@@ -1,11 +1,11 @@
 <template>
   <!-- 选择商品分类模态框 -->
-  <el-dialog title="商品" :visible.sync="_dialogVisible" width="830px">
+  <el-dialog title="商品" v-model:model-value="_dialogVisible" width="830px">
     <!-- 列表搜索栏 -->
     <div class="table-search">
       <div class="search-form">
         <el-input v-model="searchValue" size="small">
-          <el-button slot="append" icon="el-icon-search" @click="getList" />
+          <template #append><el-button icon="el-icon-search" @click="getList" /></template>
         </el-input>
       </div>
       <div class="search-btn">
@@ -22,11 +22,11 @@
       style="width: 100%"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column v-if="selectType === 'single'" label="选择" width="70"><template slot-scope="scope"><el-radio v-model="checkedId" :label="scope.row.id"><span /></el-radio></template></el-table-column>
+      <el-table-column v-if="selectType === 'single'" label="选择" width="70"><template #default="scope"><el-radio v-model="checkedId" :label="scope.row.id"><span /></el-radio></template></el-table-column>
       <el-table-column v-if="selectType === 'multi'" type="selection" width="55" />
       <el-table-column label="商品编码" prop="jvCode" />
       <el-table-column label="商品名称" prop="jvName">
-        <!-- <template slot-scope="scope">
+        <!-- <template #default="scope">
           <div class="flex-center pr-20">
             <el-radio
               v-if="selectType === 'single'"
@@ -58,19 +58,19 @@
       />
     </div>
     <!-- 底部操作 -->
-    <div slot="footer" class="dialog-footer">
+    <template #footer><div class="dialog-footer">
       <el-button size="medium" type="primary" @click="selectSure">
         确 定
       </el-button>
       <el-button size="medium" @click="_dialogVisible = false">
         取 消
       </el-button>
-    </div>
+    </div></template>
   </el-dialog>
 </template>
 
 <script>
-import { fetchProduct } from '@/api/index'
+import { fetchProduct } from '@/api/index.js'
 
 export default {
   name: 'DialogProduct',

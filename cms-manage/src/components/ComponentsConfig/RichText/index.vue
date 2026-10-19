@@ -8,19 +8,20 @@
       <el-color-picker v-model="configData.backgroundColor" size="small" />
     </ComGroup>
     <ComGroup title="内容" :content-block="true">
-      <quill-editor ref="myTextEditor" v-model="configData.content" :options="editorOption" />
+      <RichEditor ref="myTextEditor" v-model="configData.content" :options="editorOption" />
       <el-upload class="avatar-uploader" :action="uploadUrl" :headers="uploadHeaders" :show-file-list="false" accept="image/png,image/jpeg" :on-success="onImageUploaded"><button type="button">上传图片</button></el-upload>
     </ComGroup>
   </div>
 </template>
 
 <script>
-import {upLoadUrl} from '@/api/index'
-import ComGroup from '@/components/BasicUi/ComGroup'
+import RichEditor from '@/components/BasicUi/RichEditor.vue'
+import {upLoadUrl} from '@/api/index.js'
+import ComGroup from '@/components/BasicUi/ComGroup.vue'
 
 export default {
   name: 'RichText',
-  components: { ComGroup },
+  components: { ComGroup, RichEditor },
   props: ['parmes'],
   data() {
     return {
@@ -104,7 +105,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-/deep/.ql-container.ql-snow {
+:deep(.ql-container.ql-snow) {
   height: 200px;
 }
 .avatar-uploader {

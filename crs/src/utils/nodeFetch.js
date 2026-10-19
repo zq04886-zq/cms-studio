@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { nodeUrl } from '@/config/index'
+import { nodeUrl } from '@/config/index.js'
 // console.log(a, 'nodeUrl')
 const instance = axios.create({
   baseURL: nodeUrl,

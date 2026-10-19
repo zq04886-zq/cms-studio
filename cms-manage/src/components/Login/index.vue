@@ -12,11 +12,11 @@
         ref="loginForm"
         :model="form"
         :rules="rules"
-        @keyup.enter.native="onLogin"
+        @keyup.enter="onLogin"
       >
         <el-form-item prop="username">
           <el-input v-model.trim="form.username" placeholder="请输入账户" clearable>
-            <i slot="prefix" class="iconfont icon-user" />
+            <template #prefix><i class="iconfont icon-user" /></template>
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
@@ -28,14 +28,14 @@
             autocomplete="off"
             clearable
           >
-            <i slot="prefix" class="iconfont icon-lock" />
+            <template #prefix><i class="iconfont icon-lock" /></template>
           </el-input>
         </el-form-item>
         <el-form-item v-if="isValidateCode" prop="validateCode">
           <el-row :gutter="2">
             <el-col :span="16">
               <el-input v-model.trim="form.validateCode" type="text" placeholder="请输入验证码">
-                <i slot="prefix" class="iconfont icon-safetycertificate" />
+                <template #prefix><i class="iconfont icon-safetycertificate" /></template>
               </el-input>
             </el-col>
             <el-col :span="8">
@@ -64,7 +64,7 @@
 
 <script>
 import { Validator, Common } from '@bigbighu/cms-utils'
-import Edit from './Edit'
+import Edit from './Edit.vue'
 
 export default {
   components: {
@@ -104,7 +104,7 @@ export default {
       }
     }
     return {
-      bgImg: require(`../../assets/images/JV_login/bg_login.jpg`),
+      bgImg: new URL('../../assets/images/JV_login/bg_login.jpg', import.meta.url).href,
       firstLogin: false, // 是否首次登录
       isValidateCode: 0, // 是否需要验证码
       form: {
@@ -266,7 +266,7 @@ export default {
       font-size: 28px;
       text-align: center;
     }
-    .el-input /deep/ .el-input__inner {
+    .el-input :deep(.el-input__inner) {
       border: none;
       border-bottom: 1px solid #e1e1e1;
       padding-left: 41px;

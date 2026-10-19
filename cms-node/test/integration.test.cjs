@@ -5,13 +5,13 @@ let server,url,token,pageId;
 async function req(endpoint,body,auth=token){const r=await fetch(url+'/atlas-cms'+endpoint,{method:body===undefined?'GET':'POST',headers:{...(body===undefined?{}:{'Content-Type':'application/json'}),...(auth?{'X-token':auth}:{})},body:body===undefined?undefined:JSON.stringify(body)});return {status:r.status,...await r.json()}}
 const content={name:'集成测试页面',cover:'',shareDesc:'分享说明',shareImage:'',backgroundColor:'#ffffff',backgroundPosition:'top',componentList:[{name:'文本',data:{component:'RichText',content:'<p>测试正文</p><script>alert(1)</script>',validTime:[]}}]};
 before(async()=>{
- assert.equal(model.sequelize.config.database,'cms_studio_test');
- await model.sequelize.sync({force:true});
- await model.application.create({id:1,name:'test'});
- await model.user.create({user_name:'testadmin',password:passwords.hash('Test-password-12345')});
+ assert.equal(require('../config').db.database,'cms_studio_test');
+ await model.$transaction([model.components.deleteMany(),model.page.deleteMany(),model.session.deleteMany(),model.picture.deleteMany(),model.product.deleteMany(),model.user.deleteMany()]);
+ await model.application.upsert({where:{id:1},create:{id:1,name:'test'},update:{}});
+ await model.user.create({data:{user_name:'testadmin',password:passwords.hash('Test-password-12345')}});
  server=app.listen(0,'127.0.0.1');await new Promise(r=>server.once('listening',r));url='http://127.0.0.1:'+server.address().port;
 });
-after(async()=>{if(server)await new Promise(r=>server.close(r));await model.sequelize.close()});
+after(async()=>{if(server)await new Promise(r=>server.close(r));await model.$disconnect()});
 test('anonymous access rejected; login returns independent expiring session',async()=>{
  assert.equal((await req('/getPageList?pageNum=1&pageSize=10',undefined,'')).status,401);
  assert.notEqual((await req('/login',{username:'testadmin',password:'incorrect'},'')).code,10000);
@@ -26,8 +26,8 @@ test('editing returns id and replaces components without duplicating pages',asyn
  const result=await req('/updateCmsJson',{...content,id:pageId,name:'修改后'});assert.equal(result.code,10000);assert.equal(result.data.id,pageId);assert.equal(await model.page.count(),1);assert.equal(await model.components.count(),1);
 });
 test('failure inserting components rolls back page update and component deletion',async()=>{
- const original=model.components.bulkCreate;model.components.bulkCreate=async()=>{throw new Error('test transaction rollback')};
- try{assert.equal((await req('/updateCmsJson',{...content,id:pageId,name:'不能被保存'})).status,500)}finally{model.components.bulkCreate=original}
+ await model.$executeRawUnsafe("ALTER TABLE components ADD CONSTRAINT test_component_failure CHECK (name <> 'FAIL_INSERT')");
+ try{assert.equal((await req('/updateCmsJson',{...content,id:pageId,name:'不能被保存',componentList:[{...content.componentList[0],name:'FAIL_INSERT'}]})).status,500)}finally{await model.$executeRawUnsafe('ALTER TABLE components DROP CHECK test_component_failure')}
  const saved=await req('/getPageJson?id='+pageId);assert.equal(saved.data.name,'修改后');assert.equal(saved.data.componentList.length,1);
 });
 test('status filtering includes drafts and publishing controls public access',async()=>{
@@ -55,7 +55,7 @@ test('disguised upload rejected; unauthenticated upload rejected',async()=>{
  assert.equal((await fetch(url+'/atlas-cms/file/upload',{method:'POST',body:form})).status,401);
 });
 test('product search and public product hydration use persistent records',async()=>{
- const p=await model.product.create({jvCode:'TEST-001',jvName:'测试商品',brand:'Studio',listPrice:19.9,imgUrl:''});
+ const p=await model.product.create({data:{jvCode:'TEST-001',jvName:'测试商品',brand:'Studio',listPrice:19.9,imgUrl:''}});
  const list=await req('/products?name='+encodeURIComponent('测试'));assert.equal(list.data.total,1);
  const result=await req('/products/by-ids',{skuIdList:[p.id]},'');assert.equal(result.data[0].jvBrand,'测试商品');assert.equal(Number(result.data[0].listPrice),19.9);
 });

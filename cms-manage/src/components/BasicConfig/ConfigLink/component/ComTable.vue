@@ -2,13 +2,13 @@
   <div class="com-table">
     <json-form :data="formConfig" @onSearch="onSearch" @onReset="onReset" />
     <el-table v-loading="tableLoading" border
-              size="mini"
+              size="small"
               :data="tableData"
               :max-height="maxHeight"
               style="width: 100%"
     >
-      <template v-for="item in columns">
-        <el-table-column :key="item.key"
+      <template v-for="item in columns" :key="item.key">
+        <el-table-column
                          :prop="item.key"
                          :label="item.label"
                          :width="item.width"
@@ -20,13 +20,13 @@
                        width="65px"
                        align="center"
       >
-        <template slot-scope="scope">
+        <template #default="scope">
           <el-button v-if="disabledRow(scope.row)" type="text" :disabled="true"
-                     size="mini" @click="onSelect(scope.row)"
+                     size="small" @click="onSelect(scope.row)"
           >
             已选择
           </el-button>
-          <el-button v-else type="text" size="mini"
+          <el-button v-else type="text" size="small"
                      @click="onSelect(scope.row)"
           >
             选择
@@ -38,10 +38,10 @@
       <el-pagination
         background
         layout="total, prev, pager, next, sizes"
-        :page-size.sync="page.pageSize"
+        v-model:page-size="page.pageSize"
         :page-sizes="[10, 30,50,100]"
         :total="total"
-        :current-page.sync="page.pageNum"
+        v-model:current-page="page.pageNum"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -49,8 +49,8 @@
   </div>
 </template>
 <script>
-import fetch from '@/api/axios'
-import JsonForm from './JsonForm'
+import fetch from '@/api/axios.js'
+import JsonForm from './JsonForm.vue'
 export default {
   components: {JsonForm},
   props: {
@@ -97,7 +97,7 @@ export default {
   created() {
     this.init()
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.clearFormData()
   },
   methods: {
@@ -112,7 +112,8 @@ export default {
       this.tableLoading = true
       let params = Object.assign({}, this.page, this.query, this.formParams)
       console.dir(params)
-      fetch.post(this.url, params).then((data) => {
+      fetch.get(this.url, { params }).then((response) => {
+        let data = response.data
         data = data || {}
         this.total = data.total || 0
         this.tableData = data.list || []
@@ -177,7 +178,7 @@ export default {
     margin-top: 10px;
     text-align: right;
   }
-  /deep/.json-form{
+  :deep(.json-form) {
     .sa-input, .sa-select{
       max-width: 190px;
     }

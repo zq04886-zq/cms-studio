@@ -5,7 +5,7 @@
 
     <ComGroup :bg-gray="true" :content-block="true">
       <PicList
-        :image-list.sync="configData.noticelist"
+        v-model:image-list="configData.noticelist"
         add-place-holder="添加内容"
         :show-pic="false"
       />
@@ -16,7 +16,7 @@
       <el-button type="text" class="mr-15" @click="configData.imageUrl = ''">
         重置
       </el-button>
-      <UpLoadBox :img-url.sync="configData.imageUrl" />
+      <UpLoadBox v-model:img-url="configData.imageUrl" />
     </ComGroup>
 
     <!-- 颜色配置 -->
@@ -36,9 +36,11 @@
 </template>
 
 <script>
-import ComGroup from '@/components/BasicUi/ComGroup'
-import UpLoadBox from '@/components/BasicUi/UpLoadBox'
-import PicList from '@/components/BasicConfig/PicList'
+import { useEditorStore } from '@/store/index.js'
+
+import ComGroup from '@/components/BasicUi/ComGroup.vue'
+import UpLoadBox from '@/components/BasicUi/UpLoadBox.vue'
+import PicList from '@/components/BasicConfig/PicList.vue'
 
 export default {
   name: 'Notice',
@@ -68,8 +70,8 @@ export default {
   methods: {
     // 上传图片
     showDialogImage() {
-      this.$store.commit('SET_UPIMAGE_VISIBLE', true)
-      this.$store.commit('SET_UPIMAGE_FUC', this.upLoadImgSuccess)
+      useEditorStore().SET_UPIMAGE_VISIBLE(true)
+      useEditorStore().SET_UPIMAGE_FUC(this.upLoadImgSuccess)
     },
     // 图片上传成功
     upLoadImgSuccess(imgUrl) {

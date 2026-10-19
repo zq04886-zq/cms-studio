@@ -18,7 +18,7 @@
     </div>
     <!-- 分享 -->
     <div class="share-box">
-      <img class="logo" src="~@/assets/img/layout/logo.png">
+      <img class="logo" src="@/assets/img/layout/logo.png">
       <div class="code-box">
         <p class="title">
           手机扫码访问
@@ -36,7 +36,7 @@
 
 <script>
 import VueQr from 'vue-qr'
-import settings from '@/config'
+import settings from '@/config/index.js'
 
 export default {
   name: 'Preview',
@@ -62,7 +62,7 @@ export default {
     }
     window.addEventListener('message',this.tokenListener)
   },
-  beforeDestroy(){window.removeEventListener('message',this.tokenListener)},
+  beforeUnmount(){window.removeEventListener('message',this.tokenListener)},
   methods: {}
 }
 </script>

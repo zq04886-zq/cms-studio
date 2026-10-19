@@ -14,7 +14,9 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { useEditorStore } from '@/store/index.js'
+
+import { mapState } from 'pinia'
 export default {
   name: 'About',
   data() {
@@ -22,7 +24,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('user', ['currentUser'])
+    ...mapState(useEditorStore, 'user', ['currentUser'])
   }
 }
 </script>

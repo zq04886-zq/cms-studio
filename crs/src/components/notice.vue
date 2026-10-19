@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import JumpLink from '@/mixin/jumpLink'
+import JumpLink from '@/mixin/jumpLink.js'
 
 export default {
   name: 'Notice',
@@ -71,7 +71,7 @@ export default {
 </script>
 <style scoped lang='less'>
 .noticeBar{
-  /deep/ .van-notice-bar__content{
+  :deep(.van-notice-bar__content) {
     display: flex !important;
   }
   .noticeItem{

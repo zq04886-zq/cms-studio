@@ -31,7 +31,7 @@
 </template>
 <script>
 import defaultImg from '../../assets/block-img.png'
-import JumpLink from '@/mixin/jumpLink'
+import JumpLink from '@/mixin/jumpLink.js'
 export default {
   name: 'FloatLayer',
   mixins: [JumpLink],
@@ -64,7 +64,7 @@ export default {
       })
     }
   },
-  destroyed () {
+  unmounted() {
     window.removeEventListener('scroll', this.scrollHandler)
   },
   methods: {

@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model application {
+  id                 Int     @id @default(autoincrement())
+  name               String  @db.VarChar(128)
+  application_string String? @db.VarChar(256)
+  page               page[]
+}
+
+model component_definition {
+  id              Int             @id @default(autoincrement())
+  group_id        Int
+  name            String          @db.VarChar(50)
+  component_key   String          @db.VarChar(20)
+  update_time     DateTime        @db.DateTime(0)
+  component_group component_group @relation(fields: [group_id], references: [id], onDelete: NoAction, map: "component_definition_ibfk_1")
+
+  @@index([group_id], map: "group_id")
+}
+
+model component_group {
+  id                   Int                    @id @default(autoincrement())
+  name                 String                 @db.VarChar(50)
+  update_time          DateTime               @db.DateTime(0)
+  component_definition component_definition[]
+}
+
+model components {
+  id               Int    @id @default(autoincrement())
+  page_id          Int
+  component_string String @db.LongText
+  sort             Int
+  name             String @db.VarChar(20)
+  page             page   @relation(fields: [page_id], references: [id], onDelete: NoAction, map: "components_ibfk_1")
+
+  @@index([page_id], map: "page_id")
+}
+
+model page {
+  id             Int          @id @default(autoincrement())
+  application_id Int
+  name           String       @db.VarChar(128)
+  cover          String       @db.VarChar(1024)
+  page_type      Int?
+  is_abled       Int?
+  page_string    String       @db.LongText
+  create_time    DateTime     @db.DateTime(0)
+  update_time    DateTime     @db.DateTime(0)
+  creator        String       @db.VarChar(100)
+  share_desc     String?      @db.VarChar(1024)
+  share_image    String?      @db.VarChar(1024)
+  components     components[]
+  application    application  @relation(fields: [application_id], references: [id], onDelete: Cascade, map: "page_ibfk_1")
+
+  @@index([application_id], map: "application_id")
+}
+
+model picture {
+  id         Int       @id @default(autoincrement())
+  name       String?   @db.VarChar(255)
+  url        String?   @db.VarChar(1024)
+  created_at DateTime? @db.DateTime(0)
+}
+
+model product {
+  id        Int      @id @default(autoincrement())
+  jvCode    String?  @unique(map: "jvCode") @db.VarChar(100)
+  jvName    String?  @db.VarChar(200)
+  brand     String?  @db.VarChar(100)
+  imgUrl    String?  @db.VarChar(1024)
+  listPrice Decimal? @db.Decimal(10, 2)
+}
+
+model session {
+  token_hash String    @id @db.VarChar(64)
+  user_id    Int?
+  expires_at DateTime? @db.DateTime(0)
+}
+
+model user {
+  id        Int    @id @default(autoincrement())
+  user_name String @unique(map: "user_name") @db.VarChar(20)
+  password  String @db.VarChar(255)
+}

@@ -1,6 +1,6 @@
 <template>
   <van-dialog v-if="isDisplay"
-              v-model="isDisplay"
+              v-model:show="isDisplay"
               :show-confirm-button="false"
               class="dialog-info"
   >
@@ -17,7 +17,7 @@
   </van-dialog>
 </template>
 <script>
-import JumpLink from '@/mixin/jumpLink'
+import JumpLink from '@/mixin/jumpLink.js'
 
 export default {
   name: 'Dialog',

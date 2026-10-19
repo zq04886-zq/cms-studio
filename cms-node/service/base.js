@@ -1,9 +1,9 @@
-const Sequelize = require('sequelize')
+
 const models = require('../models')
 
 class BaseService {
   static model = models
-  static Sequelize = Sequelize
+
   // static pageSize = 30
 
   static success(data, message, code) {

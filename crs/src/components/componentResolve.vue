@@ -27,21 +27,23 @@
   </div>
 </template>
 <script>
+import { useEditorStore } from '@/store/index.js'
+
 // import sersorsLoad from '@/sensors'
-import runEnv from '../utils/runEnv'
-import Carousel from '@/components/Carousel'
-import Dialog from '@/components/Dialog'
-import imgc from '@/components/imgc'
-import AssistLine from '@/components/AssistLine'
-import FloatLayer from '@/components/FloatLayer'
-import OnlineService from '@/components/OnlineService'
-import Slider from '@/components/Slider'
-import CubeSelection from '@/components/cubeSelection'
-import ImageNav from '@/components/image-nav'
-import { mapState, mapMutations } from 'vuex'
-import product from '@/components/product'
-import Notice from '@/components/notice'
-import RichText from '@/components/richText'
+import runEnv from '../utils/runEnv.js'
+import Carousel from '@/components/Carousel.vue'
+import Dialog from '@/components/Dialog.vue'
+import imgc from '@/components/imgc.vue'
+import AssistLine from '@/components/AssistLine/index.vue'
+import FloatLayer from '@/components/FloatLayer/index.vue'
+import OnlineService from '@/components/OnlineService/index.vue'
+import Slider from '@/components/Slider.vue'
+import CubeSelection from '@/components/cubeSelection.vue'
+import ImageNav from '@/components/image-nav/index.js'
+import { mapState, mapActions } from 'pinia'
+import product from '@/components/product.vue'
+import Notice from '@/components/notice.vue'
+import RichText from '@/components/richText.vue'
 export default {
   name: 'ComponentResolve',
   components: {
@@ -88,7 +90,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['previewId']),
+    ...mapState(useEditorStore, ['previewId']),
     operateTagClass() {
       return this.componentConfig.data.component === 'OnlineService'
         ? 'online-service-pos'
@@ -108,7 +110,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations([
+    ...mapActions(useEditorStore, [
       'changeSelected',
       'deleteComponent'
     ]),

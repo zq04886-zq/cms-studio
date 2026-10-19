@@ -1,7 +1,7 @@
-import nodeFetch from '../utils/nodeFetch'
+import nodeFetch from '../utils/nodeFetch.js'
 async function previewToken() {
   if(window.parent===window)return localStorage.getItem('token')||''
-  const origin=process.env.NODE_ENV==='production'?window.location.origin:'http://127.0.0.1:3011'
+  const origin=import.meta.env.PROD?window.location.origin:'http://127.0.0.1:3011'
   return new Promise((resolve,reject)=>{
     const done=event=>{
       if(event.source===window.parent && event.origin===origin && event.data && event.data.type==='cms-preview-token'){

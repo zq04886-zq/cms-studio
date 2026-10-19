@@ -5,7 +5,7 @@
       v-for="item in radioList"
       :key="item.id"
       class="com-radio-button"
-      :class="{'active':value == item.id}"
+      :class="{'active':modelValue == item.id}"
       @click="setValue(item.id)"
     >
       <!-- 有icon图标 -->
@@ -35,14 +35,14 @@ export default {
     },
     // 按钮组内容是否自动按父级宽度100%填充
     contentBlock: Boolean,
-    value: {
+    modelValue: {
       type: [String, Number], default: null
     } // 当前选中的按钮id
   },
   methods: {
     // 按钮选择事件
     setValue(id) {
-      this.$emit('input', id)
+      this.$emit('update:modelValue', id)
     }
   }
 }

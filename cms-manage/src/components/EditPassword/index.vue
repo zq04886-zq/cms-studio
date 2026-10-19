@@ -6,7 +6,7 @@
       >
         <el-form-item label="账号">
           <el-input v-model.trim="userInfo.account" clearable disabled>
-            <i slot="prefix" class="iconfont icon-user" />
+            <template #prefix><i class="iconfont icon-user" /></template>
           </el-input>
         </el-form-item>
         <el-form-item label="输入新密码" prop="newPassword">
@@ -18,7 +18,7 @@
             onfocus="this.removeAttribute('readonly');"
             onblur="this.setAttribute('readonly',true);"
           >
-            <i slot="prefix" class="iconfont icon-lock" />
+            <template #prefix><i class="iconfont icon-lock" /></template>
           </el-input>
           <div class="popover">
             密码长度 8~16位，至少1位大写字母、1位小写字母、1位数字<br>新密码不能和旧密码、初始密码一样
@@ -33,7 +33,7 @@
             onfocus="this.removeAttribute('readonly');"
             onblur="this.setAttribute('readonly',true);"
           >
-            <i slot="prefix" class="iconfont icon-lock" />
+            <template #prefix><i class="iconfont icon-lock" /></template>
           </el-input>
         </el-form-item>
         <el-form-item label="验证码" prop="checkCode">
@@ -41,16 +41,15 @@
             v-model.trim="form.checkCode"
             type="text"
             placeholder="请输入验证码"
-            @keyup.enter.native="onLogin('loginForm')"
+            @keyup.enter="onLogin('loginForm')"
           >
-            <i slot="prefix" class="iconfont icon-safetycertificate" />
-            <img
-              slot="suffix"
+            <template #prefix><i class="iconfont icon-safetycertificate" /></template>
+            <template #suffix><img
               class="checkCode"
               :src="validateCodeUrl"
               alt
               @click="changeValidateCode"
-            >
+            /></template>
           </el-input>
         </el-form-item>
         <el-form-item>
@@ -67,7 +66,7 @@
 
 <script>
 import { Validator, Common, Encrypt, Auth, Storage } from '@bigbighu/cms-utils'
-import User from '../../mixins/user'
+import User from '../../mixins/user.js'
 export default {
   mixins: [User],
   props: {
@@ -204,7 +203,7 @@ export default {
 .editPassword {
   width: 450px;
   padding-top: 20px;
-  .el-input /deep/ .el-input__inner {
+  .el-input :deep(.el-input__inner) {
     border: none;
     border-bottom: 1px solid #e1e1e1;
     border-radius: 0;

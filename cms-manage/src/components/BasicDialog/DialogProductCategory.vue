@@ -1,6 +1,6 @@
 <template>
   <!-- 选择商品分类模态框 -->
-  <el-dialog title="商品分类" :visible.sync="_dialogVisible" width="400px">
+  <el-dialog title="商品分类" v-model:model-value="_dialogVisible" width="400px">
     <!-- 754px -->
     <!-- 列表搜索栏 -->
     <div class="table-search">
@@ -29,19 +29,19 @@
       </div>
     </div>
     <!-- 底部操作 -->
-    <div slot="footer" class="dialog-footer">
+    <template #footer><div class="dialog-footer">
       <el-button size="medium" type="primary" @click="selectSure">
         确 定
       </el-button>
       <el-button size="medium" @click="_dialogVisible = false">
         取 消
       </el-button>
-    </div>
+    </div></template>
   </el-dialog>
 </template>
 
 <script>
-import { fetchProductCategory } from '@/api/index'
+import { fetchProductCategory } from '@/api/index.js'
 
 export default {
   name: 'DialogProductCategory',
@@ -155,10 +155,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
-/deep/ .el-cascader-menu__wrap {
+:deep(.el-cascader-menu__wrap) {
   height: 400px;
 }
-/deep/ .el-cascader-menu {
+:deep(.el-cascader-menu) {
   flex: 1;
 }
 </style>

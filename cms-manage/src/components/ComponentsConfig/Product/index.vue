@@ -23,18 +23,16 @@
     <ComGroup title="添加商品" />
     <ComGroup :content-block="true">
       <div class="up-pic-img-box">
-        <draggable
+        <draggable item-key="jvId"
           v-model="configData.productList"
-          :options="{
+          v-bind="{
             animation: 300,
             handle: '.up-pic-img',
             forceFallback: true,
             fallbackTolerance: 1
           }"
-        >
+        ><template #item="{ element: item, index }">
           <div
-            v-for="(item, index) in configData.productList"
-            :key="index"
             class="up-pic-img"
           >
             <!-- <img :src="item.img" /> -->
@@ -47,7 +45,7 @@
               @click="deleteProduct(index)"
             />
           </div>
-        </draggable>
+        </template></draggable>
         <UpLoadBox add-place-holder="" :upload-file="false" @editImg="dialogProductVisible = true" />
       </div>
     </ComGroup>
@@ -189,7 +187,7 @@
       >
     </ComGroup> -->
     <DialogProduct
-      :dialog-visible.sync="dialogProductVisible"
+      v-model:dialog-visible="dialogProductVisible"
       select-type="multi"
       @selectSure="selectProduct"
     />
@@ -197,10 +195,10 @@
 </template>
 <script>
 import draggable from 'vuedraggable' // 拖拽元素
-import ComGroup from '@/components/BasicUi/ComGroup'
-import DialogProduct from '@/components/BasicDialog/DialogProduct'
-import UpLoadBox from '@/components/BasicUi/UpLoadBox'
-import ComRadioGroup from '@/components/BasicUi/ComRadioGroup'
+import ComGroup from '@/components/BasicUi/ComGroup.vue'
+import DialogProduct from '@/components/BasicDialog/DialogProduct.vue'
+import UpLoadBox from '@/components/BasicUi/UpLoadBox.vue'
+import ComRadioGroup from '@/components/BasicUi/ComRadioGroup.vue'
 export default {
   name: 'Product',
   components: { draggable, ComGroup, DialogProduct, UpLoadBox, ComRadioGroup },

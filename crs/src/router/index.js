@@ -1,10 +1,10 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import home from '../pages/home'
 
-Vue.use(Router)
+import { createRouter, createWebHashHistory } from 'vue-router'
+import home from '../pages/home/index.vue'
 
-export default new Router({
+
+
+export default createRouter({ history: createWebHashHistory(),
   routes: [
     {
       path: '/',

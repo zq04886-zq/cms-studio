@@ -1,4 +1,4 @@
-import UserInfo from '@/utils/getUserInfo'
+import UserInfo from '@/utils/getUserInfo.js'
 import { getDefaultCarObject } from '@/apis/link.js'
 
 const SUCCESS_CODE = 10000; // 后端统一成功code值

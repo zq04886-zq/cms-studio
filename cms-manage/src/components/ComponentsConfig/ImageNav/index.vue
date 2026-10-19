@@ -13,7 +13,7 @@
         v-model="configData.borderRadius"
         show-input
         :show-input-controls="false"
-        input-size="mini"
+        input-size="small"
       />
     </ComGroup>
     <!-- 内边距 -->
@@ -31,7 +31,7 @@
           v-model="configData.columnPadding"
           show-input
           :show-input-controls="false"
-          input-size="mini"
+          input-size="small"
         />
       </ComGroup>
       <ComGroup title="左右边距">
@@ -39,7 +39,7 @@
           v-model="configData.rowPadding"
           show-input
           :show-input-controls="false"
-          input-size="mini"
+          input-size="small"
         />
       </ComGroup>
     </div>
@@ -48,7 +48,7 @@
         v-model="configData.lineNumber"
         show-input
         :show-input-controls="false"
-        input-size="mini"
+        input-size="small"
         :max="8"
         :min="1"
       />
@@ -62,7 +62,7 @@
 
     <ComGroup :content-block="true">
       <PicList
-        :image-list.sync="configData.imageList"
+        v-model:image-list="configData.imageList"
         add-place-holder="添加图文导航"
         :show-pic="selectLayout.id === 'pic'"
       />
@@ -93,10 +93,10 @@
 </template>
 
 <script>
-import ComGroup from '@/components/BasicUi/ComGroup'
-import ComRadioGroup from '@/components/BasicUi/ComRadioGroup'
-import ComDivider from '@/components/BasicUi/ComDivider'
-import PicList from '@/components/BasicConfig/PicList'
+import ComGroup from '@/components/BasicUi/ComGroup.vue'
+import ComRadioGroup from '@/components/BasicUi/ComRadioGroup.vue'
+import ComDivider from '@/components/BasicUi/ComDivider.vue'
+import PicList from '@/components/BasicConfig/PicList.vue'
 
 export default {
   name: 'Navigation',

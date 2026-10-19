@@ -23,7 +23,7 @@
 
     <!-- 修改图片 -->
     <ComGroup :bg-gray="true" :content-block="true">
-      <PicList :key="activeIndex" :image-list.sync="selectPic" :show-name="false"
+      <PicList :key="activeIndex" v-model:image-list="selectPic" :show-name="false"
                :show-add="false" :show-delete="false" :un-graggable="true"
       />
     </ComGroup>
@@ -38,7 +38,7 @@
         :max="30"
         show-input
         :show-input-controls="false"
-        input-size="mini"
+        input-size="small"
       />
     </ComGroup>
     <ComGroup title="图片间隙">
@@ -47,7 +47,7 @@
         :max="30"
         show-input
         :show-input-controls="false"
-        input-size="mini"
+        input-size="small"
       />
     </ComGroup>
     <ComGroup title="图片圆角">
@@ -56,17 +56,17 @@
         :max="30"
         show-input
         :show-input-controls="false"
-        input-size="mini"
+        input-size="small"
       />
     </ComGroup>
   </div>
 </template>
 
 <script>
-import ComGroup from '@/components/BasicUi/ComGroup'
-import ComRadioGroup from '@/components/BasicUi/ComRadioGroup'
-import PicList from '@/components/BasicConfig/PicList'
-import { debounce } from '@/utils'
+import ComGroup from '@/components/BasicUi/ComGroup.vue'
+import ComRadioGroup from '@/components/BasicUi/ComRadioGroup.vue'
+import PicList from '@/components/BasicConfig/PicList.vue'
+import { debounce } from '@/utils/index.js'
 
 export default {
   name: 'CubeSelection',

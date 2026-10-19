@@ -22,7 +22,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { useEditorStore } from '@/store/index.js'
+
+import { mapState } from 'pinia'
 
 export default {
   name: 'SidebarLogo',
@@ -37,7 +39,7 @@ export default {
   },
 
   computed: {
-    ...mapState({
+    ...mapState(useEditorStore, {
       systemLogo: state => state.app.systemLogo,
       systemName: state => state.app.systemName
     })

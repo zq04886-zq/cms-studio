@@ -1,6 +1,9 @@
-<template functional>
+<template>
   <div class="com-divider" />
 </template>
+<script>
+export default { props: [] }
+</script>
 
 <style lang="less" scoped>
 // 组件编辑-分割线

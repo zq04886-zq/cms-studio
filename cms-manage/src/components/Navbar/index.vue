@@ -20,20 +20,22 @@
           </p>
           <i class="el-icon-arrow-down el-icon--right" :class="isDropdownOpen ? 'open' : ''" />
         </div>
-        <el-dropdown-menu slot="dropdown">
+        <template #dropdown><el-dropdown-menu>
           <el-dropdown-item>
             <div @click="logout">登出</div>
           </el-dropdown-item>
-        </el-dropdown-menu>
+        </el-dropdown-menu></template>
       </el-dropdown>
     </div>
   </div>
 </template>
 
 <script>
-// import { mapGetters } from 'vuex'
-import Breadcrumb from '@/components/Breadcrumb'
-import request from '@/utils/request'
+import { useEditorStore } from '@/store/index.js'
+
+// import { mapState } from 'pinia'
+import Breadcrumb from '@/components/Breadcrumb/index.vue'
+import request from '@/utils/request.js'
 
 export default {
   components: {
@@ -63,7 +65,7 @@ export default {
     }
   },
   // computed: {
-  //   ...mapGetters({
+  //   ...mapState(useEditorStore, {
   //     sidebar: 'app/sidebar',
   //     device: 'app/device',
   //     account: 'user/account',

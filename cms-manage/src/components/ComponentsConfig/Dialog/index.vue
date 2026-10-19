@@ -16,7 +16,7 @@
 
     <ComGroup :bg-gray="true" :content-block="true">
       <PicList
-        :image-list.sync="configData.imageList"
+        v-model:image-list="configData.imageList"
         add-place-holderr="添加图片"
         :limit-size="1"
         :show-add="false"
@@ -26,10 +26,10 @@
 </template>
 
 <script>
-import ComGroup from '@/components/BasicUi/ComGroup'
-import ComDivider from '@/components/BasicUi/ComDivider'
-import PicList from '@/components/BasicConfig/PicList'
-import ComRadioGroup from '@/components/BasicUi/ComRadioGroup'
+import ComGroup from '@/components/BasicUi/ComGroup.vue'
+import ComDivider from '@/components/BasicUi/ComDivider.vue'
+import PicList from '@/components/BasicConfig/PicList.vue'
+import ComRadioGroup from '@/components/BasicUi/ComRadioGroup.vue'
 
 export default {
   name: 'Dialog',

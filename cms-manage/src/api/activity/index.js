@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from '@/utils/request.js'
 // 查询所有页面列表
 export function getCmsPageList(data) {
   return request.get('/atlas-cms/getPageList?' + new URLSearchParams(data).toString())

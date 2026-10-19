@@ -42,7 +42,7 @@ export default {
       })
     }
   },
-  destroyed () {
+  unmounted() {
     window.removeEventListener('scroll', this.scrollHandler)
   },
   methods: {

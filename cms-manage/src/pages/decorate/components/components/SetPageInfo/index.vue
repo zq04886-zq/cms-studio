@@ -31,7 +31,7 @@
       <el-button type="text" class="mr-15" @click="shareImage = ''">
         重置
       </el-button>
-      <UpLoadBox :img-url.sync="shareImage" @editImg="showDialogImage('shareImage')" />
+      <UpLoadBox v-model:img-url="shareImage" @editImg="showDialogImage('shareImage')" />
     </ComGroup>
 
     <!-- 分割线 -->
@@ -50,7 +50,7 @@
       <el-button type="text" class="mr-15" @click="backgroundImage = ''">
         重置
       </el-button>
-      <UpLoadBox :img-url.sync="backgroundImage" @editImg="showDialogImage('backgroundImage')" />
+      <UpLoadBox v-model:img-url="backgroundImage" @editImg="showDialogImage('backgroundImage')" />
     </ComGroup>
 
     <!-- 背景图片位置 -->
@@ -66,10 +66,12 @@
 </template>
 
 <script>
-import ComTitle from '@/components/BasicUi/ComTitle'
-import ComGroup from '@/components/BasicUi/ComGroup'
-import ComDivider from '@/components/BasicUi/ComDivider'
-import UpLoadBox from '@/components/BasicUi/UpLoadBox'
+import { useEditorStore } from '@/store/index.js'
+
+import ComTitle from '@/components/BasicUi/ComTitle.vue'
+import ComGroup from '@/components/BasicUi/ComGroup.vue'
+import ComDivider from '@/components/BasicUi/ComDivider.vue'
+import UpLoadBox from '@/components/BasicUi/UpLoadBox.vue'
 
 export default {
   name: 'SetPageInfo',
@@ -84,7 +86,7 @@ export default {
     // 页面名称
     name: {
       get: function() {
-        return this.$store.state.pageData.name
+        return useEditorStore().pageData.name
       },
       set: function(val) {
         this.updatePageInfo({ name: val })
@@ -93,7 +95,7 @@ export default {
     // 微信分享文案
     shareDesc: {
       get: function() {
-        return this.$store.state.pageData.shareDesc
+        return useEditorStore().pageData.shareDesc
       },
       set: function(val) {
         this.updatePageInfo({ shareDesc: val })
@@ -102,7 +104,7 @@ export default {
     // 微信分享卡片
     shareImage: {
       get: function() {
-        return this.$store.state.pageData.shareImage
+        return useEditorStore().pageData.shareImage
       },
       set: function(val) {
         this.updatePageInfo({ shareImage: val })
@@ -111,7 +113,7 @@ export default {
     // 背景颜色
     backgroundColor: {
       get: function() {
-        return this.$store.state.pageData.backgroundColor
+        return useEditorStore().pageData.backgroundColor
       },
       set: function(val) {
         this.updatePageInfo({ backgroundColor: val })
@@ -120,7 +122,7 @@ export default {
     // 背景图片
     backgroundImage: {
       get: function() {
-        return this.$store.state.pageData.backgroundImage
+        return useEditorStore().pageData.backgroundImage
       },
       set: function(val) {
         this.updatePageInfo({ backgroundImage: val })
@@ -129,7 +131,7 @@ export default {
     // 背景图片位置
     backgroundPosition: {
       get: function() {
-        return this.$store.state.pageData.backgroundPosition
+        return useEditorStore().pageData.backgroundPosition
       },
       set: function(val) {
         this.updatePageInfo({ backgroundPosition: val })
@@ -139,8 +141,8 @@ export default {
   methods: {
     // 上传图片
     showDialogImage(key) {
-      // this.$store.commit('SET_UPIMAGE_VISIBLE', true)
-      // this.$store.commit('SET_UPIMAGE_FUC', this.upLoadImgSuccess)
+      // useEditorStore().SET_UPIMAGE_VISIBLE(true)
+      // useEditorStore().SET_UPIMAGE_FUC(this.upLoadImgSuccess)
       this.uploadKey = key
     },
     // 图片上传成功
@@ -150,7 +152,7 @@ export default {
     },
     // 更改配置数据
     updatePageInfo(value) {
-      this.$store.commit('SET_PAGE_CONFIG', value)
+      useEditorStore().SET_PAGE_CONFIG(value)
     }
   }
 }

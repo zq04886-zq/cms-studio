@@ -1,8 +1,11 @@
-<template functional>
+<template>
   <div class="component-title">
-    {{ props.title }}
+    {{ title }}
   </div>
 </template>
+<script>
+export default { props: ['title'] }
+</script>
 
 <style lang="less" scoped>
 // 组件编辑标题

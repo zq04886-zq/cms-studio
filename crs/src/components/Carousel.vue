@@ -36,7 +36,7 @@
 
 <script>
 import defaultImg from '../assets/swipe-default.png'
-import JumpLink from '@/mixin/jumpLink'
+import JumpLink from '@/mixin/jumpLink.js'
 
 export default {
   name: 'Carousel',

@@ -1,6 +1,6 @@
 const BaseService = require('./base')
 const model = require('../models')
-const { Op } = require('sequelize')
+const dayjs = require('dayjs')
 const { randomBytes, createHash } = require('crypto')
 const passwords = require('../utils/password')
 const sanitizeHtml = require('sanitize-html')
@@ -20,16 +20,17 @@ class CMSService extends BaseService {
  static async save(data, update) {
   validate(data)
   const {name,cover='',shareDesc='',shareImage='',componentList,creator='',id,params,...rest}=clean(data)
-  const result = await model.sequelize.transaction(async transaction=>{
+  const result = await model.$transaction(async transaction=>{
    let page
    const values={name,cover,share_desc:shareDesc,share_image:shareImage,page_string:JSON.stringify(rest),update_time:new Date()}
    if(update){
-    page=await model.page.findByPk(id,{transaction,lock:transaction.LOCK.UPDATE})
+    const rows=await transaction.$queryRaw`SELECT id FROM page WHERE id = ${Number(id)} FOR UPDATE`
+    page=rows[0]
     if(!page) throw Object.assign(new Error('页面不存在'),{status:404})
-    await page.update(values,{transaction})
-    await model.components.destroy({where:{page_id:id},transaction})
-   }else page=await model.page.create({...values,application_id:1,page_type:0,is_abled:0,create_time:new Date(),creator},{transaction})
-   await model.components.bulkCreate(componentList.map((c,i)=>({page_id:page.id,name:c.name,sort:i,component_string:JSON.stringify(c.data)})),{transaction})
+    await transaction.page.update({where:{id:page.id},data:values})
+    await transaction.components.deleteMany({where:{page_id:Number(id)}})
+   }else page=await transaction.page.create({data:{...values,application_id:1,page_type:0,is_abled:0,create_time:new Date(),creator}})
+   if(componentList.length) await transaction.components.createMany({data:componentList.map((c,i)=>({page_id:page.id,name:c.name,sort:i,component_string:JSON.stringify(c.data)}))})
    return {id:page.id}
   })
   return this.success(result)
@@ -37,40 +38,40 @@ class CMSService extends BaseService {
  static addPageJson(data){return this.save(data,false)}
  static updateCmsJson(data){return this.save(data,true)}
  static async getPageData({id,type}) {
-  const page=await model.page.findByPk(id,{include:[model.components],order:[[model.components,'sort','ASC']]})
+  const page=await model.page.findUnique({where:{id:Number(id)},include:{components:{orderBy:{sort:'asc'}}}})
   if(!page || (type==='h5' && !page.is_abled)) throw Object.assign(new Error('页面未发布或不存在'),{status:404})
   const componentList=page.components.filter(c=>{
    if(type==='cms')return true
-   const t=c.component_string.validTime
+   const t=JSON.parse(c.component_string).validTime
    return !Array.isArray(t)||t.length!==2||(Date.now()>=new Date(t[0]).getTime()&&Date.now()<=new Date(t[1]).getTime())
-  }).map(c=>({id:c.id,name:c.name,sort:c.sort,data:c.component_string}))
-  return {...page.page_string,id:page.id,name:page.name,cover:page.cover,shareDesc:page.share_desc,shareImage:page.share_image,componentList}
+  }).map(c=>({id:c.id,name:c.name,sort:c.sort,data:JSON.parse(c.component_string)}))
+  return {...JSON.parse(page.page_string),id:page.id,name:page.name,cover:page.cover,shareDesc:page.share_desc,shareImage:page.share_image,componentList}
  }
  static async getPageList(data){
   const pageNum=Math.max(1,Number(data.pageNum)||1),pageSize=Math.max(1,Math.min(100,Number(data.pageSize)||10)),where={}
-  if(data.name)where.name={[Op.like]:`%${data.name}%`}
-  if(data.id)where.id=data.id
+  if(data.name)where.name={contains:data.name}
+  if(data.id)where.id=Number(data.id)
   if(data.creator)where.creator=data.creator
   if(data.is_abled!==undefined && data.is_abled!=='')where.is_abled=Number(data.is_abled)
-  if(data.startDate||data.endDate){where.create_time={};if(data.startDate)where.create_time[Op.gte]=data.startDate;if(data.endDate)where.create_time[Op.lte]=data.endDate}
-  const result=await model.page.findAndCountAll({where,offset:(pageNum-1)*pageSize,limit:pageSize,order:[['update_time','DESC'],['id','DESC']]})
-  return {list:result.rows,total:result.count,pageNum,pageSize}
+  if(data.startDate||data.endDate){where.create_time={};if(data.startDate)where.create_time.gte=new Date(data.startDate);if(data.endDate)where.create_time.lte=new Date(data.endDate)}
+  const [list,total]=await model.$transaction([model.page.findMany({where,skip:(pageNum-1)*pageSize,take:pageSize,orderBy:[{update_time:'desc'},{id:'desc'}]}),model.page.count({where})])
+  return {list:list.map(p=>({...p,create_time:dayjs(p.create_time).format('YYYY-MM-DD HH:mm:ss'),update_time:dayjs(p.update_time).format('YYYY-MM-DD HH:mm:ss')})),total,pageNum,pageSize}
  }
  static async deletePage(id){
-  await model.sequelize.transaction(async transaction=>{await model.components.destroy({where:{page_id:id},transaction});await model.page.destroy({where:{id},transaction})});return {}
+  await model.$transaction(async transaction=>{await transaction.components.deleteMany({where:{page_id:Number(id)}});await transaction.page.deleteMany({where:{id:Number(id)}})});return {}
  }
  static async updatePageStatus(id,is_abled){
   if(![0,1].includes(is_abled))throw Object.assign(new Error('无效的发布状态'),{status:400})
-  const page=await model.page.findByPk(id);if(!page)throw Object.assign(new Error('页面不存在'),{status:404})
-  await page.update({is_abled,update_time:new Date()});return {}
+  const page=await model.page.findUnique({where:{id:Number(id)}});if(!page)throw Object.assign(new Error('页面不存在'),{status:404})
+  await model.page.update({where:{id:page.id},data:{is_abled,update_time:new Date()}});return {}
  }
- static getPageAll(){return model.page.findAll({where:{is_abled:1},attributes:['id','name']})}
+ static getPageAll(){return model.page.findMany({where:{is_abled:1},select:{id:true,name:true}})}
  static async login({username,password}){
-  const user=await model.user.findOne({where:{user_name:username}})
+  const user=await model.user.findUnique({where:{user_name:username}})
   if(!user||!passwords.verify(password,user.password))return null
   const token=randomBytes(32).toString('hex')
-  await model.session.destroy({where:{expires_at:{[Op.lt]:new Date()}}})
-  await model.session.create({token_hash:createHash('sha256').update(token).digest('hex'),user_id:user.id,expires_at:new Date(Date.now()+8*60*60*1000)})
+  await model.session.deleteMany({where:{expires_at:{lt:new Date()}}})
+  await model.session.create({data:{token_hash:createHash('sha256').update(token).digest('hex'),user_id:user.id,expires_at:new Date(Date.now()+8*60*60*1000)}})
   return {token,username:user.user_name}
  }
 }

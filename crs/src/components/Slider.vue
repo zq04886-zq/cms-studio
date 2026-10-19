@@ -24,7 +24,7 @@
 import BScroll from 'better-scroll'
 // import defaultImg from '../assets/block-placeholder-image.png'
 import defaultImg from '../assets/block-img.png'
-import JumpLink from '@/mixin/jumpLink'
+import JumpLink from '@/mixin/jumpLink.js'
 
 export default {
   name: 'Slider',

@@ -26,8 +26,10 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
-import settings from '@/config'
+import { useEditorStore } from '@/store/index.js'
+
+import { mapState, mapActions } from 'pinia'
+import settings from '@/config/index.js'
 
 export default {
   name: 'PageView',
@@ -37,7 +39,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['pageData', 'previewHeight', 'componentsTopList', 'dragActive', 'addComponentIndex']),
+    ...mapState(useEditorStore, ['pageData', 'previewHeight', 'componentsTopList', 'dragActive', 'addComponentIndex']),
     previewSrc() {
       return settings.decorateViewSrc + `?pageId=${this.$route.query.id || ''}&noLogin=true`
     }
@@ -47,8 +49,8 @@ export default {
     this.initMessage()
   },
   methods: {
-    ...mapMutations(['SET_DRAG_INDEX', 'VIEW_ADD_PREVIEW', 'VIEW_DELETE_PREVIEW']),
-    ...mapActions(['initMessage']),
+    ...mapActions(useEditorStore, ['SET_DRAG_INDEX', 'VIEW_ADD_PREVIEW', 'VIEW_DELETE_PREVIEW']),
+    ...mapActions(useEditorStore, ['initMessage']),
     // 左侧组件拖动到页面预览区域事件
     onDragover(event) {
       event.preventDefault() // 设置当前区域可以被进入
@@ -84,7 +86,7 @@ export default {
       }
     },
     onloadH5() {
-      this.$store.commit('VIEW_UPDATE')
+      useEditorStore().VIEW_UPDATE()
     }
   }
 }
@@ -137,7 +139,7 @@ export default {
     height: @content-header-height;
     width: 375px;
     margin: 72px auto 0;
-    background: url("~@/assets/img/layout/header_bg.png") left top no-repeat;
+    background: url("@/assets/img/layout/header_bg.png") left top no-repeat;
     background-size: cover;
     position: relative;
     box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.1);

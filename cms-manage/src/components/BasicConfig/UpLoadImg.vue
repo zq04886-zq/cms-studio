@@ -2,7 +2,8 @@
   <!-- 上传图片模态框 -->
   <el-dialog
     title="我的图片"
-    :visible.sync="dialogImageVisible"
+    :model-value="dialogImageVisible"
+    @update:model-value="dialogHide"
     :before-close="dialogHide"
     width="900px"
   >
@@ -21,9 +22,9 @@
       <el-button size="small" type="primary" :loading="uploading">
         +&nbsp;上传图片
       </el-button>
-      <div slot="tip" class="el-upload__tip">
+      <template #tip><div class="el-upload__tip">
         只能上传jpg/png文件，且不超过2MB
-      </div>
+      </div></template>
     </el-upload>
 
     <!-- 选择图片库已有图片 -->
@@ -71,19 +72,19 @@
       图片库中暂无图片
     </div>
 
-    <div slot="footer" class="dialog-footer">
+    <template #footer><div class="dialog-footer">
       <el-button type="primary" :disabled="!selectPicUrl" @click="selectSure">
         确 定
       </el-button>
       <el-button @click="dialogHide">
         取 消
       </el-button>
-    </div>
+    </div></template>
   </el-dialog>
 </template>
 
 <script>
-import { fetchPictureGroup, fetchPictureList, upLoadUrl } from '@/api/index'
+import { fetchPictureGroup, fetchPictureList, upLoadUrl } from '@/api/index.js'
 
 export default {
   name: 'UpLoadImg',

@@ -1,16 +1,16 @@
 ﻿$ErrorActionPreference = 'Stop'
 $cmsRoot = $PSScriptRoot
 $cmsNode = $null
-$cmsCandidates = @((Join-Path $env:USERPROFILE '.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe'))
+$cmsCandidates = @((Join-Path $cmsRoot '.local\node-v24.22.0-win-x64\node.exe'))
 $cmsSystemNode = Get-Command node.exe -ErrorAction SilentlyContinue
 if ($cmsSystemNode) { $cmsCandidates += $cmsSystemNode.Source }
 foreach ($candidate in $cmsCandidates) {
  if (Test-Path -LiteralPath $candidate) {
   $version = & $candidate --version 2>$null
-  if ($version -match '^v(\d+)' -and [int]$Matches[1] -ge 22) { $cmsNode = $candidate; break }
+  if ($version -match '^v24\.(\d+)' -and [int]$Matches[1] -ge 22) { $cmsNode = $candidate; break }
  }
 }
-if (!$cmsNode) { throw '请安装 Node.js 22.13 或更新版本。' }
+if (!$cmsNode) { throw '请安装 Node.js 24.22+ LTS（24.x）。' }
 function Test-CmsPort([int]$Port) {
  $client = [Net.Sockets.TcpClient]::new()
  try { $client.Connect('127.0.0.1',$Port); return $true } catch { return $false } finally { $client.Dispose() }

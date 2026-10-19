@@ -1,8 +1,8 @@
 <template>
   <div>
-    <draggable
+    <draggable :item-key="item => picData.indexOf(item)"
       v-model="picData"
-      :options="{
+      v-bind="{
         animation: 300,
         handle: '.up-pic-item',
         disabled: unGraggable || picData.length < 2,
@@ -10,17 +10,16 @@
         fallbackTolerance: 1,
       }"
     >
+      <template #item="{ element: item, index }">
       <!-- 图片列表 -->
       <div
-        v-for="(item, index) in picData"
-        :key="index"
         class="up-pic-item"
         :class="{ 'can-drag': !unGraggable && picData.length > 1 }"
       >
         <div class="up-pic-item-wrapper">
           <UpLoadBox
             v-if="showPic"
-            :img-url.sync="item.imageUrl"
+            v-model:img-url="item.imageUrl"
             @editImg="editPic(item)"
           />
           <div class="info">
@@ -42,7 +41,7 @@
               </dt>
               <dd class="form-container">
                 <!-- 配置链接地址组件 -->
-                <ConfigLink :link-obj.sync="item.link" />
+                <ConfigLink v-model:link-obj="item.link" />
               </dd>
             </dl>
           </div>
@@ -54,17 +53,19 @@
           @click="deleteItem(index)"
         />
       </div>
-    </draggable>
+    </template></draggable>
     <!-- 添加图片 -->
     <ButtonAdd v-if="showAdd" :add-text="addPlaceHolder" @click="addItem" />
   </div>
 </template>
 
 <script>
+import { useEditorStore } from '@/store/index.js'
+
 import draggable from 'vuedraggable' // 拖拽元素
-import UpLoadBox from '@/components/BasicUi/UpLoadBox'
-import ButtonAdd from '@/components/BasicUi/ButtonAdd'
-import ConfigLink from '@/components/BasicConfig/ConfigLink'
+import UpLoadBox from '@/components/BasicUi/UpLoadBox.vue'
+import ButtonAdd from '@/components/BasicUi/ButtonAdd.vue'
+import ConfigLink from '@/components/BasicConfig/ConfigLink/index.vue'
 
 export default {
   name: 'PicList',
@@ -169,8 +170,8 @@ export default {
     },
     // 图片上传
     showDialogImage() {
-      this.$store.commit('SET_UPIMAGE_VISIBLE', true)
-      this.$store.commit('SET_UPIMAGE_FUC', this.upLoadImgSuccess)
+      useEditorStore().SET_UPIMAGE_VISIBLE(true)
+      useEditorStore().SET_UPIMAGE_FUC(this.upLoadImgSuccess)
     },
     // 图片上传成功
     upLoadImgSuccess(imgUrl) {
@@ -212,7 +213,7 @@ export default {
       visibility: visible;
     }
   }
-  /deep/.config-link .cllt-name{
+  :deep(.config-link .cllt-name) {
     max-width:110px
   }
 }
@@ -240,7 +241,7 @@ export default {
   .form-container {
     flex: 1;
   }
-  /deep/ .input-name .el-input__inner {
+  :deep(.input-name .el-input__inner) {
     height: 32px;
     line-height: 32px;
     padding: 0 10px;

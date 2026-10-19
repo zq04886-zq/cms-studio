@@ -6,7 +6,7 @@
     <el-form ref="initPasswordForm" :model="form" :rules="rules">
       <el-form-item prop="username">
         <el-input v-model.trim="account" clearable disabled>
-          <i slot="prefix" class="iconfont icon-user" />
+          <template #prefix><i class="iconfont icon-user" /></template>
         </el-input>
       </el-form-item>
       <el-form-item prop="password">
@@ -19,7 +19,7 @@
           onblur="this.setAttribute('readonly',true);"
           placeholder="请输入新密码"
         >
-          <i slot="prefix" class="iconfont icon-lock" />
+          <template #prefix><i class="iconfont icon-lock" /></template>
         </el-input>
       </el-form-item>
       <el-form-item prop="passwordAgain">
@@ -32,7 +32,7 @@
           onblur="this.setAttribute('readonly',true);"
           placeholder="再次输入新密码"
         >
-          <i slot="prefix" class="iconfont icon-lock" />
+          <template #prefix><i class="iconfont icon-lock" /></template>
         </el-input>
       </el-form-item>
       <el-form-item prop="validateCode">
@@ -43,7 +43,7 @@
               type="text"
               placeholder="请输入验证码"
             >
-              <i slot="prefix" class="iconfont icon-safetycertificate" />
+              <template #prefix><i class="iconfont icon-safetycertificate" /></template>
             </el-input>
           </el-col>
           <el-col :span="8">
@@ -63,8 +63,10 @@
 </template>
 
 <script>
+import { useEditorStore } from '@/store/index.js'
+
 import { Validator, Common, Encrypt } from '@bigbighu/cms-utils'
-import { mapGetters } from 'vuex'
+import { mapState } from 'pinia'
 
 export default {
   props: {
@@ -134,7 +136,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('user', ['user_id', 'account', 'token']),
+    ...mapState(useEditorStore, 'user', ['user_id', 'account', 'token']),
     validateCodeUrl() {
       return `${this.baseURL}${this.requestURL}/user/generateValidateCode?validateKey=${this.uid}`
     }
@@ -191,7 +193,7 @@ export default {
   .title {
     margin-bottom: 10px;
   }
-  .el-input /deep/ .el-input__inner {
+  .el-input :deep(.el-input__inner) {
     border: none;
     border-bottom: 1px solid #e1e1e1;
     padding-left: 41px;

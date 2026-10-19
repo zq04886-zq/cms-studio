@@ -18,7 +18,9 @@
 </template>
 
 <script>
-import { saveCmsPage } from '@/api/activity'
+import { useEditorStore } from '@/store/index.js'
+
+import { saveCmsPage } from '@/api/activity/index.js'
 export default {
   name: 'PageHead',
   data() {
@@ -30,7 +32,7 @@ export default {
   },
   computed: {
     pageData() {
-      return this.$store.state.pageData
+      return useEditorStore().pageData
     }
   },
   methods: {
@@ -111,7 +113,7 @@ export default {
       if(String(this.$route.query.id)!==String(id))this.$router.replace(`/decorate?id=${id}`)
       let pageData = {...this.pageData}
       pageData.id = id
-      this.$store.commit('UPDATE_COMPONENT', {data: pageData})
+      useEditorStore().UPDATE_COMPONENT({data: pageData})
     }
   }
 }

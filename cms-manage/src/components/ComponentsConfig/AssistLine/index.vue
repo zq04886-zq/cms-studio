@@ -12,14 +12,14 @@
     </ComGroup>
     <div v-if="configData.type === 1">
       <ComGroup title="线颜色">
-        <el-color-picker v-model="configData.borderColor" size="mini" />
-        <el-button type="text" size="mini">
+        <el-color-picker v-model="configData.borderColor" size="small" />
+        <el-button type="text" size="small">
           重置
         </el-button>
       </ComGroup>
       <ComGroup title="背景色">
-        <el-color-picker v-model="configData.backgroundColor" size="mini" />
-        <el-button type="text" size="mini">
+        <el-color-picker v-model="configData.backgroundColor" size="small" />
+        <el-button type="text" size="small">
           重置
         </el-button>
       </ComGroup>
@@ -29,7 +29,7 @@
           :max="100"
           show-input
           :show-input-controls="false"
-          input-size="mini"
+          input-size="small"
         />
       </ComGroup>
       <ComGroup title="边距">
@@ -63,14 +63,14 @@
           :max="100"
           show-input
           :show-input-controls="false"
-          input-size="mini"
+          input-size="small"
         />
       </ComGroup>
     </div>
   </div>
 </template>
 <script>
-import ComGroup from '@/components/BasicUi/ComGroup'
+import ComGroup from '@/components/BasicUi/ComGroup.vue'
 export default {
   name: 'AssistLine',
   components: {ComGroup},
@@ -98,7 +98,7 @@ export default {
 }
 </script>
 <style type="less" scoped>
-    /deep/.el-color-picker{
+    :deep(.el-color-picker) {
       vertical-align: top;
       margin-right: 8px;
     }

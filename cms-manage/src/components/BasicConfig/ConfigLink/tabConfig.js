@@ -1,6 +1,6 @@
-import {productListApi, singleCouponListAPi, couponBagListApi, activityListApi} from '@/api/link'
-import { activityStatusArr } from '@/config/coupon'
-import { dayjs } from 'dayjs'
+const productListApi = '/atlas-cms/products'
+import { activityStatusArr } from '@/config/coupon.js'
+import dayjs from 'dayjs'
 
 const effectiveTimeFormatter = (row) => {
   const {effectiveType, effectiveStartTime, effectiveEndTime, effectiveDay} = row
@@ -32,16 +32,16 @@ export default [
     label: '商品',
     component: 'com-table',
     url: productListApi,
-    linkTextAttr: 'name',
+    linkTextAttr: 'jvName',
     query: {
       jvStatus: 1,
       skuType: 0,
       status: 1
     },
-    saveKeys: ['id', 'name'],
+    saveKeys: ['id', 'jvName'],
     columns: [
       { label: '商品编码', key: 'jvCode' },
-      { label: '商品名称', key: 'name' },
+      { label: '商品名称', key: 'jvName' },
       { label: '品牌', key: 'brand' }
     ],
     formConfig: {

@@ -1,12 +1,12 @@
 <template>
   <ComGroup title="文案" label-width="56px">
-    <el-input v-model="configData.text" :disabled="true" size="mini"
+    <el-input v-model="configData.text" :disabled="true" size="small"
               placeholder="文字建议4个字"
     />
   </ComGroup>
 </template>
 <script>
-import ComGroup from '@/components/BasicUi/ComGroup'
+import ComGroup from '@/components/BasicUi/ComGroup.vue'
 export default {
   name: 'OnlineService',
   components: {ComGroup},

@@ -12,7 +12,7 @@ export default {
     // 浏览器大小变化时动态设置表格高度，及监听的移除
     const _debounceHeight = debounce(this.setTableFlexHeight, 300)
     window.addEventListener('resize', _debounceHeight, false)
-    this.$once('hook:beforeDestroy', function() {
+    this.$once('hook:beforeUnmount', function() {
       window.removeEventListener('resize', _debounceHeight, false)
     })
   },

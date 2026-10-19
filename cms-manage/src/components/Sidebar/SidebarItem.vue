@@ -17,13 +17,13 @@
       :index="resolvePath(item.path)"
       popper-append-to-body
     >
-      <template slot="title">
+      <template #title><template>
         <item
           v-if="item.meta"
           :icon="item.meta && item.meta.icon"
           :title="item.meta.title"
         />
-      </template>
+      </template></template>
       <sidebar-item
         v-for="child in item.children"
         :key="child.path"
@@ -38,9 +38,9 @@
 <script>
 import path from 'path'
 import { Validator } from '@bigbighu/cms-utils'
-import Item from './Item'
-import AppLink from './Link'
-// import FixiOSBug from './FixiOSBug'
+import Item from './Item.vue'
+import AppLink from './Link.vue'
+// import FixiOSBug from './FixiOSBug.js'
 
 export default {
   name: 'SidebarItem',

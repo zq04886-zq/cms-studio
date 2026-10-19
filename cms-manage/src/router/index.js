@@ -1,7 +1,7 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Layout from '@/layout'
-import './routerExtend'
+
+import { createRouter, createWebHashHistory } from 'vue-router'
+import Layout from '@/layout/index.vue'
+
 
 export const constantRoutes = [
   {
@@ -34,14 +34,14 @@ export const constantRoutes = [
   },
   {
     path: '/404',
-    component: () => import('../pages/error-page/404'),
+    component: () => import('../pages/error-page/404.vue'),
     name: '404',
     hidden: true,
     meta: { title: '404' }
   },
   {
     path: '/401',
-    component: () => import('../pages/error-page/401'),
+    component: () => import('../pages/error-page/401.vue'),
     name: '401',
     hidden: true,
     meta: { title: '401' }
@@ -50,13 +50,13 @@ export const constantRoutes = [
   {
     path: '/decorate',
     name: 'decorate',
-    component: () => import('../pages/decorate/index')
+    component: () => import('../pages/decorate/index.vue')
   },
   // 预览页面
   {
     path: '/preview',
     name: 'preview',
-    component: () => import('../pages/preview/index')
+    component: () => import('../pages/preview/index.vue')
   },
   // 活动列表页
   {
@@ -66,8 +66,8 @@ export const constantRoutes = [
     meta: { title: '活动管理' },
     children: [
       {
-        path: '/',
-        component: () => import('@/pages/activity/index'),
+        path: '',
+        component: () => import('@/pages/activity/index.vue'),
         hidden: true
       }
     ]
@@ -77,17 +77,16 @@ export const constantRoutes = [
 // 动态需要根据权限加载的路由表
 export const asyncRoutes = []
 
-const createRouter = () =>
-  new Router({
-    scrollBehavior: () => ({ y: 0 }),
+const buildRouter = () =>
+  createRouter({ history: createWebHashHistory(),
+    scrollBehavior: () => ({ top: 0 }),
     routes: constantRoutes
   })
-const router = createRouter()
-Vue.router = router
+const router = buildRouter()
+
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
-  const newRouter = createRouter()
-  router.matcher = newRouter.matcher // reset router
+  for (const route of asyncRoutes) if (route.name && router.hasRoute(route.name)) router.removeRoute(route.name)
 }
 
 router.beforeEach((to, from, next) => {

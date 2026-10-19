@@ -6,9 +6,9 @@ module.exports = () => async (req, res, next) => {
  try {
   const token = req.get('X-token') || ''
   if (!/^[a-f0-9]{64}$/.test(token)) return res.status(401).json({code:-2,message:'请登录后继续'})
-  const session = await model.session.findByPk(createHash('sha256').update(token).digest('hex'))
+  const session = await model.session.findUnique({where:{token_hash:createHash('sha256').update(token).digest('hex')}})
   if(!session || new Date(session.expires_at) <= new Date()) return res.status(401).json({code:-2,message:'登录已过期'})
-  req.user = await model.user.findByPk(session.user_id)
+  req.user = session.user_id ? await model.user.findUnique({where:{id:session.user_id}}) : null
   if(!req.user) return res.status(401).json({code:-2,message:'账号不存在'})
   req.session = session
   next()

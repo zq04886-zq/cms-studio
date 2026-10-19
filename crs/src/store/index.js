@@ -1,8 +1,8 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import Postmessage from '@/utils/Postmessage'
-import coupon from './coupon'
-Vue.use(Vuex)
+
+import { defineStore } from 'pinia'
+import Postmessage from '@/utils/Postmessage.js'
+
+
 
 /** 图文导航-测试数据--start */
 const base = {
@@ -26,8 +26,8 @@ const list8 = new Array(10).fill(null).map((item, index) => {
 
 /** 测试数据--end */
 
-export default new Vuex.Store({
-  state: {
+export const useEditorStore = defineStore('editor', {
+  state: () => ({
     pageData: {
       componentList: [
       ]
@@ -35,78 +35,68 @@ export default new Vuex.Store({
     previewId: null, // 当前选中的组件id
     previewHeight: 0,
     componentsTopList: []
-  },
-
-  getters: {
-    pageData: state => {
-      return state.pageData
-    }
-  },
-  mutations: {
-    addComponent(state, com) {
-      state.pageData.componentList.push(com)
-      this.commit('postPageChange')
+  }),
+  actions: {
+    addComponent(com) {
+      this.pageData.componentList.push(com)
+      this.postPageChange()
     },
-    deleteComponent(state, id) {
-      const index = state.pageData.componentList.findIndex(item => item.id === id)
-      state.pageData.componentList.splice(index, 1)
-      this.commit('postPageChange')
+    deleteComponent(id) {
+      const index = this.pageData.componentList.findIndex(item => item.id === id)
+      this.pageData.componentList.splice(index, 1)
+      this.postPageChange()
     },
-    changeSelected(state, id) {
-      state.previewId = id
+    changeSelected(id) {
+      this.previewId = id
       Postmessage.postMessage('setActive', id)
     },
     // 从后台接收数据，更新crs页面数据
-    changeComponent(state, { disabledRestHeight, value }) {
-      state.pageData = value;
+    changeComponent({ disabledRestHeight, value }) {
+      this.pageData = value;
       if (disabledRestHeight) return
-      this.commit('getComponentsTop')
+      this.getComponentsTop()
     },
-    changeComponentPosition(state, data) {
-      this.commit('postPageChange')
+    changeComponentPosition(data) {
+      this.postPageChange()
     },
     // 像后台发送页面数据变更事件
-    postPageChange(state) {
-      Postmessage.postMessage('pageChange', state.pageData)
-      this.commit('getComponentsTop')
+    postPageChange() {
+      Postmessage.postMessage('pageChange', this.pageData)
+      this.getComponentsTop()
     },
-    setComponent(state, data) {
-      state.pageData.componentList = data
+    setComponent(data) {
+      this.pageData.componentList = data
     },
     // 添加预添加组件
-    setPreview(state, index) {
-      this.commit('deletePreview')
+    setPreview(index) {
+      this.deletePreview()
       const previewComponent = {
         data: {
           component: 'blank'
         }
       }
-      state.pageData.componentList.splice(index, 0, previewComponent)
+      this.pageData.componentList.splice(index, 0, previewComponent)
     },
     // 删除预添加组件
-    deletePreview(state) {
-      state.pageData.componentList = state.pageData.componentList.filter(item => item.data.component != "blank")
+    deletePreview() {
+      this.pageData.componentList = this.pageData.componentList.filter(item => item.data.component != "blank")
     },
-    setActiveId(state, id) {
-      state.previewId = id
+    setActiveId(id) {
+      this.previewId = id
     },
-    getComponentsTop(state) {
+    getComponentsTop() {
       setTimeout(() => {
         let elements = document.getElementsByClassName('components')
-        state.componentsTopList = []
+        this.componentsTopList = []
         for (let i = 0; i < elements.length; i++) {
-          state.componentsTopList.push(elements[i].offsetTop + elements[i].offsetHeight)
+          this.componentsTopList.push(elements[i].offsetTop + elements[i].offsetHeight)
         }
-        state.previewHeight = document.getElementById('wrap').offsetHeight
+        this.previewHeight = document.getElementById('wrap').offsetHeight
         Postmessage.postMessage('pageHeightChange', {
-          height: state.previewHeight,
-          componentsTopList: state.componentsTopList
+          height: this.previewHeight,
+          componentsTopList: this.componentsTopList
         })
       })
     }
-  },
-  actions: {},
-  modules: {
-    coupon
   }
 })

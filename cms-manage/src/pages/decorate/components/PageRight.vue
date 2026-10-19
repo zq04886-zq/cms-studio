@@ -24,13 +24,15 @@
 </template>
 
 <script>
-import { dynamicComponents } from '@/utils' // 动态注册组件
-import { mapState, mapActions } from 'vuex'
-import ChangeSetType from './components/ChangeSetType'
-import ComTitle from '@/components/BasicUi/ComTitle'
-import NoSelect from './components/NoSelect'
-import SetPageInfo from './components/SetPageInfo'
-import ComValidTime from '../../../components/BasicUi/ComValidTime'
+import { useEditorStore } from '@/store/index.js'
+
+import { dynamicComponents } from '@/utils/index.js' // 动态注册组件
+import { mapState, mapActions } from 'pinia'
+import ChangeSetType from './components/ChangeSetType/index.vue'
+import ComTitle from '@/components/BasicUi/ComTitle.vue'
+import NoSelect from './components/NoSelect/index.vue'
+import SetPageInfo from './components/SetPageInfo/index.vue'
+import ComValidTime from '../../../components/BasicUi/ComValidTime.vue'
 export default {
   name: 'PageRight',
   // 动态注册所有可配置组件
@@ -47,14 +49,14 @@ export default {
     }
   },
   computed: {
-    ...mapState(['pageData', 'activeComponentId']),
+    ...mapState(useEditorStore, ['pageData', 'activeComponentId']),
     // 当前设置内容 1-页面；2-组件
     setType: {
       get: function() {
-        return this.$store.state.setType
+        return useEditorStore().setType
       },
       set: function(val) {
-        this.$store.commit('SET_SETTYPE', val)
+        useEditorStore().SET_SETTYPE(val)
       }
     },
     // 当前选中编辑的组件
@@ -64,7 +66,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['pageChange']),
+    ...mapActions(useEditorStore, ['pageChange']),
     // 更新组件数据
     editComponent(data) {
       console.log('修改store数据')
@@ -79,7 +81,7 @@ export default {
 </script>
 
 <style lang="less">
-@import url("~@/styles/icon.less");
+@import url("@/styles/icon.less");
 
 .page-right {
   position: absolute;

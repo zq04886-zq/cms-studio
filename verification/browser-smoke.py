@@ -1,0 +1,52 @@
+"""Read-only initial browser inspection. Requires the local server on port 3300."""
+import json
+from pathlib import Path
+from playwright.sync_api import sync_playwright
+
+with sync_playwright() as p:
+    browser = p.chromium.launch(channel="chrome", headless=True)
+    page = browser.new_page(viewport={"width": 1440, "height": 1000})
+    errors = []
+    page.on("pageerror", lambda error: errors.append(str(error)))
+    page.goto("http://127.0.0.1:3300/cms-manage/", wait_until="networkidle")
+    page.screenshot(path="verification/login.png", full_page=True)
+    env = dict(line.split('=', 1) for line in Path('cms-node/.env').read_text(encoding='utf-8').splitlines() if '=' in line and not line.startswith('#'))
+    page.get_by_placeholder('用户名', exact=True).fill(env['ADMIN_USER'])
+    page.get_by_placeholder('密码', exact=True).fill(env['ADMIN_PASSWORD'])
+    page.get_by_role('button', name='登录', exact=True).click()
+    page.wait_for_url('**/#/home')
+    page.wait_for_load_state('networkidle')
+    page.screenshot(path='verification/home.png', full_page=True)
+    page.get_by_placeholder('给你的新页面起个名字').fill('CMS Studio · 面试演示')
+    page.get_by_role('button', name='创建页面', exact=True).click()
+    page.wait_for_url('**/#/decorate')
+    page.wait_for_load_state('networkidle')
+    page.screenshot(path='verification/editor.png', full_page=True)
+    page.locator('.component-list li').filter(has=page.get_by_text('文本', exact=True)).dblclick()
+    page.locator('.ql-editor').wait_for()
+    page.locator('.ql-editor').fill('CMS Studio：用组件搭建页面，用数据驱动发布。')
+    frame = page.frame_locator('#previewIframe')
+    frame.get_by_text('CMS Studio：用组件搭建页面，用数据驱动发布。', exact=True).wait_for()
+    page.get_by_role('button', name='保存', exact=True).click()
+    page.wait_for_url('**/decorate?id=*')
+    page.wait_for_load_state('networkidle')
+    page.screenshot(path='verification/editor-content.png', full_page=True)
+    page_id = page.url.split('id=')[-1]
+    page.locator('.go-back').click()
+    page.wait_for_url('**/#/activity')
+    page.wait_for_load_state('networkidle')
+    row = page.locator('.el-table__row').filter(has=page.get_by_text('#'+page_id, exact=True))
+    row.get_by_role('button', name='上线', exact=True).click()
+    row.get_by_text('已发布', exact=True).wait_for()
+    page.screenshot(path='verification/pages.png', full_page=True)
+    public_context = browser.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, device_scale_factor=1)
+    public_page = public_context.new_page()
+    public_page.on('pageerror', lambda error: errors.append(str(error)))
+    public_page.goto('http://127.0.0.1:3300/crs/#/activity?id='+page_id, wait_until='networkidle')
+    public_page.get_by_text('CMS Studio：用组件搭建页面，用数据驱动发布。', exact=True).wait_for()
+    public_page.screenshot(path='verification/published-mobile.png', full_page=True)
+    public_context.close()
+    Path('.local/demo-page-id').write_text(page_id)
+    assert not errors, errors
+    print(json.dumps({"body": page.locator("body").inner_text(), "errors": errors}, ensure_ascii=False))
+    browser.close()

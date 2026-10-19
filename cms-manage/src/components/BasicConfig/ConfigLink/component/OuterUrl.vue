@@ -6,21 +6,21 @@
     <el-form-item label="小程序的APPID" prop="appId">
       <el-input v-model.trim="formData.appId" class="form-item-width"
                 placeholder="请输入小程序的APPID"
-                size="mini"
+                size="small"
                 @change="onDataChange"
       />
       <span>（示例：wxe5f52902cf4de896）</span>
     </el-form-item>
     <el-form-item label="跳转页面的url地址" prop="redirectOuterUrl">
       <el-input v-model.trim="formData.redirectOuterUrl" class="form-item-width" placeholder="请输入跳转页面的url地址"
-                size="mini"
+                size="small"
                 @change="onDataChange"
       />
     </el-form-item>
   </el-form>
 </template>
 <script>
-import mixins from './mixins'
+import mixins from './mixins.js'
 const emptyForm = {
   appId: null,
   redirectOuterUrl: null

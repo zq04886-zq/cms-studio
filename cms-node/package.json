@@ -7,36 +7,39 @@
     "dev": "nodemon index.js",
     "db:init": "node scripts/init-db.js",
     "products:import": "node scripts/import-products.js",
-    "test": "node --test test/*.test.cjs"
+    "test": "node --test test/*.test.cjs",
+    "db:generate": "prisma generate",
+    "db:deploy": "prisma migrate deploy"
   },
   "dependencies": {
     "@bigbighu/altas": "0.0.1",
-    "axios": "^0.21.1",
-    "big.js": "^6.0.3",
-    "cookie-parser": "~1.4.4",
-    "cors": "^2.8.5",
-    "crypto-js": "^4.1.1",
-    "dayjs": "^1.10.1",
-    "debug": "~2.6.9",
-    "ejs": "^3.1.5",
-    "express": "~4.16.1",
-    "express-validator": "^6.9.2",
-    "formidable": "^2.0.1",
-    "ftp": "^0.3.10",
-    "http-errors": "~1.6.3",
-    "ioredis": "^4.19.4",
-    "lodash": "^4.17.20",
-    "mysql2": "^2.2.5",
-    "parameter": "^3.6.0",
-    "sequelize": "^5.22.3",
-    "winston": "^3.3.3",
-    "sanitize-html": "2.17.0"
+    "axios": "1.20.0",
+    "big.js": "7.0.1",
+    "cookie-parser": "1.4.7",
+    "cors": "2.8.6",
+    "crypto-js": "4.2.0",
+    "dayjs": "1.11.23",
+    "debug": "4.4.3",
+    "ejs": "7.0.2",
+    "express": "5.3.0",
+    "express-validator": "7.3.2",
+    "formidable": "3.5.4",
+    "ftp": "0.3.10",
+    "http-errors": "2.0.1",
+    "ioredis": "6.0.0",
+    "lodash": "4.18.1",
+    "mysql2": "3.24.6",
+    "parameter": "3.7.0",
+    "winston": "3.19.0",
+    "sanitize-html": "2.18.1",
+    "@prisma/client": "7.10.1",
+    "@prisma/adapter-mariadb": "7.10.1",
+    "prisma": "7.10.1"
   },
   "devDependencies": {
-    "eslint": "^7.17.0",
-    "nodemon": "^2.0.7"
+    "nodemon": "3.1.14"
   },
   "engines": {
-    "node": ">=22.13"
+    "node": ">=24.22.0 <25"
   }
 }

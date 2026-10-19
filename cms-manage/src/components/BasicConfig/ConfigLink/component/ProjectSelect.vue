@@ -4,7 +4,7 @@
       <el-select v-model="formData.projectCode"
                  class="form-item-width"
                  placeholder="请选择"
-                 size="mini"
+                 size="small"
                  style="width: 350px"
                  @change="onChange"
       >
@@ -19,8 +19,8 @@
   </el-form>
 </template>
 <script>
-import mixins from './mixins'
-import { getProjectList } from '@/api/link'
+import mixins from './mixins.js'
+import { getProjectList } from '@/api/link/index.js'
 export default {
   mixins: [mixins],
   props: {

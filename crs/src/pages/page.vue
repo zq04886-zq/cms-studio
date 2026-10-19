@@ -1,32 +1,34 @@
 <template>
   <div id="wrap" class="wrap">
-    <draggable
+    <draggable item-key="id"
       v-model="pageData.componentList"
       class="draggable"
       group="people"
       :style="pageStyle"
       @change="changePositon"
       @end="onEnd"
-    >
-      <div v-for="element in pageData.componentList" :key="element.id" class="components">
+    ><template #item="{ element }">
+      <div class="components">
         <componentResolve v-if="element.data.component !== 'blank'" :component-config-prop="element" />
         <div v-else class="blankComponent">
           <div>组件放置区域</div>
         </div>
       </div>
-      <div class="preview-height-tag">
+      </template><template #footer><div class="preview-height-tag">
         <span class="preview-height-tag-tex">iPhone 8手机高度</span>
       </div>
-    </draggable>
+    </template></draggable>
   </div>
 </template>
 
 <script>
-import draggable from 'vuedraggable'
-import {mapMutations} from 'vuex'
+import { useEditorStore } from '@/store/index.js'
 
-import componentResolve from '@/components/componentResolve'
-import Postmessage from '@/utils/Postmessage'
+import draggable from 'vuedraggable'
+import { mapActions } from 'pinia'
+
+import componentResolve from '@/components/componentResolve.vue'
+import Postmessage from '@/utils/Postmessage.js'
 export default {
   name: 'Page',
   components: {
@@ -40,7 +42,7 @@ export default {
   computed: {
     pageData: {
       get: function () {
-        return this.$store.getters.pageData
+        return useEditorStore().pageData
       },
       set: function (newValue) {
       }
@@ -65,13 +67,13 @@ export default {
   methods: {
     changePositon(e) {
       let {newIndex, oldIndex, element} = e.moved
-      this.$store.commit('changeComponentPosition', {newIndex, oldIndex, element})
+      useEditorStore().changeComponentPosition({newIndex, oldIndex, element})
     },
     onEnd(e) {
       e.preventDefault()
       e.stopPropagation()
     },
-    ...mapMutations(
+    ...mapActions(useEditorStore, 
       [
         'getComponentsTop'
       ]

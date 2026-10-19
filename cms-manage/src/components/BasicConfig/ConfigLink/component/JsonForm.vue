@@ -4,8 +4,8 @@
            labsa-position="right"
            :labsa-width="data.formAttrMap.labelWidth || '90px'"
   >
-    <template v-for="(item, key) in data.formItemMap">
-      <el-form-item :key="key" :label="item.label">
+    <template v-for="(item, key) in data.formItemMap" :key="key">
+      <el-form-item :label="item.label">
         <el-select v-if="item.type === 'select'" v-model="item.value" :size="size">
           <el-option v-for="opts in item.options" :key="opts.value" :value="opts.value"
                      :label="opts.value"
@@ -16,7 +16,7 @@
                         :type="item.dateType || 'datetimerange'"
                         range-separator="至"
                         :default-time="['00:00:00', '23:59:59']"
-                        format="yyyy-MM-dd"
+                        format="YYYY-MM-DD"
                         start-placeholder="开始日期"
                         end-placeholder="结束日期"
         />

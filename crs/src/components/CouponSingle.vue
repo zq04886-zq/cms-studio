@@ -1,6 +1,6 @@
 <template>
   <van-dialog
-    v-model="visible"
+    v-model:show="visible"
     :show-confirm-button="false"
     class="dialog-info"
   >
@@ -44,10 +44,13 @@
 </template>
 
 <script>
+import { useEditorStore } from '@/store/index.js'
+import { useCouponStore } from '@/store/coupon.js'
+
 // import Sensors from "@/sensors"
-import UserInfo from '@/utils/getUserInfo'
-import { obtainCoupon } from '@/apis/coupon'
-import { mapState, mapActions } from 'vuex'
+import UserInfo from '@/utils/getUserInfo.js'
+import { obtainCoupon } from '@/apis/coupon.js'
+import { mapState, mapActions } from 'pinia'
 
 export default {
   name: 'CouponSingle',
@@ -58,11 +61,11 @@ export default {
   },
   computed: {
     // 优惠券信息
-    ...mapState('coupon', ['couponSingle']),
+    ...mapState(useCouponStore, ['couponSingle']),
     // 模态框是否显示
     visible: {
       get: function() {
-        return this.$store.state.coupon.couponSingleVisible
+        return useCouponStore().couponSingleVisible
       },
       set: function(val) {
         this.setSingleCouponVisible(val)
@@ -70,7 +73,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('coupon', [
+    ...mapActions(useCouponStore, [
       'setSingleCouponVisible'
     ]),
     closeDialog () {

@@ -19,9 +19,9 @@
   </div>
 </template>
 <script>
-import comTable from './ComTable'
-import {orderServiceListApi, orderSaleListApi} from '@/api/link'
-import mixins from './mixins'
+import comTable from './ComTable.vue'
+import {orderServiceListApi, orderSaleListApi} from '@/api/link/index.js'
+import mixins from './mixins.js'
 import { dayjs } from 'dayjs'
 const promotionTimeFormatter = function(row) {
   let s = row.startTime ? dayjs(row.startTime).format('YYYY-MM-DD hh:mm:ss') : ''

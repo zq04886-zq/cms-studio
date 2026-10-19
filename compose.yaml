@@ -1,6 +1,6 @@
 services:
   db:
-    image: mysql:8.0
+    image: mysql:8.4
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: cms_studio
@@ -33,7 +33,7 @@ services:
       - "127.0.0.1:${PORT:-3300}:3300"
     volumes:
       - uploads:/app/cms-node/data/uploads
-    command: ["sh", "-c", "node scripts/init-db.js && node index.js"]
+    command: ["sh", "-c", "npm run db:deploy && node scripts/init-db.js && node index.js"]
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3300/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
       interval: 15s

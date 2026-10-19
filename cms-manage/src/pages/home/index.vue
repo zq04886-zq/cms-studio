@@ -20,10 +20,12 @@
   </main>
 </template>
 <script>
-import {getCmsPageList} from '@/api/activity'
+import { useEditorStore } from '@/store/index.js'
+
+import {getCmsPageList} from '@/api/activity/index.js'
 export default {
  name:'StudioHome',data:()=>({pageName:'',pages:[],loading:true}),
  created(){getCmsPageList({pageNum:1,pageSize:4}).then(r=>{this.pages=r.data.list}).catch(()=>{}).finally(()=>{this.loading=false})},
- methods:{createPage(){this.$store.commit('SET_INIT_PAGE_DATA');if(this.pageName.trim())this.$store.commit('SET_PAGE_CONFIG',{name:this.pageName.trim()});this.$router.push('/decorate')}}
+ methods:{createPage(){useEditorStore().SET_INIT_PAGE_DATA();if(this.pageName.trim())useEditorStore().SET_PAGE_CONFIG({name:this.pageName.trim()});this.$router.push('/decorate')}}
 }
 </script>
